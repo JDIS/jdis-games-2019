@@ -135,7 +135,7 @@ def make_with_prison(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5)
 
 
   add_r, add_c = room.anchor
-  print p
+  print(p)
   for j in range(p):
     cur_col = 2*(j+1)-1
     for row in range(room.r):
@@ -170,7 +170,7 @@ def make(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5):
 
   ## add a wall to the current room
   if depth==0: wall_slots = [num-2]  ## fix the first wall
-  else: wall_slots = range(1, num-1)
+  else: wall_slots = list(range(1, num-1))
   if len(wall_slots) == 0: return
   choice = random.choice(wall_slots)
   if not room.add_wall(choice, gaps, vert): return
@@ -268,4 +268,4 @@ if __name__ == '__main__':
   seed = None
   if len(sys.argv) > 1:
     seed = int(sys.argv[1])
-  print generateMaze(seed)
+  print(generateMaze(seed))
