@@ -2,6 +2,7 @@ import os
 import logging
 import helpers.directories as directories
 import shutil
+import numpy as np
 from subprocess import check_output
 
 logger = logging.getLogger(__name__)
@@ -36,24 +37,18 @@ def play_game(bots):
 def parse_game_output(output, players):
     #TODO: Rewrite completly to support pacman output
     lines = output.decode("utf-8").split('\n')
-    rank = [None]*len(players)
+    scores = [0]*len(players)
     replay_id = ''
+    # TODO: Eventually we'd like to keep track of who started
+    starting_team = lines[0]
+    score = int(lines[1])
+    replay_id = lines[2]
+    if score < 0:
+        scores[1] = abs(score)
+    elif score > 0:
+        scores[0] = abs(score)
+    indices = np.argsort(scores).tolist()
+    players = np.array(players)
+    ranks = players[indices]
 
-    for i in range(len(lines)):
-        if i == len(players)+1:
-            game_path = lines[i].split(' ')[0]
-            replay_id = os.path.basename(game_path)
-
-        elif len(players)+1 < i < 2*len(players)+2:
-            player_id, position, last_round = lines[i].split(' ')
-            rank[int(position)-1] = players[int(player_id)-1]
-
-        elif i == 2*len(players)+3:
-            error_files = lines[i].rstrip(' ').split()
-            if error_files:
-                errors_directory = directories.get_errors_directory(replay_id.split('.')[0])
-                for file_path in error_files:
-                    error_file_id = os.path.basename(file_path)
-                    shutil.move(file_path, errors_directory + error_file_id)
-
-    return rank, replay_id
+    return ranks.tolist(), replay_id

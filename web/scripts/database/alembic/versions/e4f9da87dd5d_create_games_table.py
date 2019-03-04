@@ -23,8 +23,8 @@ def upgrade():
                               server_onupdate=sa.func.current_timestamp()),
                     sa.Column('teams', sa.String, nullable=False),
                     sa.Column('winner', sa.Integer, server_default='-1'),
-                    sa.Column('ranked', sa.Boolean, server_default='False'),
-                    sa.Column('played', sa.Boolean, server_default='False'),
+                    sa.Column('ranked', sa.Boolean, server_default='0'),
+                    sa.Column('played', sa.Boolean, server_default='0'),
                     sa.Column('round', sa.Integer, server_default='0'),
                     sa.Column('replay', sa.String))
 
