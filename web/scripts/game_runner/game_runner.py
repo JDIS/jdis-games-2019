@@ -1,14 +1,17 @@
+import os
 import time
 import sys
 import logging
 import helpers.database as database
 import helpers.bots_handler as bots_handler
 import helpers.halite as halite
+import helpers.pacman as pacman
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='%(asctime)s %(name)-20s %(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 running = True
 
+game_backend = halite if os.getenv('HALITE') else pacman
 
 def main():
     i = 59
@@ -20,10 +23,11 @@ def main():
             games_ready = database.get_all_ready_games()
             for game in games_ready:
                 teams = [game.team0, game.team1, game.team2, game.team3]
+                teams = teams[0:2] #TODO Temporary change to have 2 teams
                 bots = bots_handler.prepare_bots(teams)
 
                 logger.info("Playing game: {}".format(game.id))
-                rank, replay_id = halite.play_game(bots)
+                rank, replay_id = game_backend.play_game(bots)
                 database.update_played_game(game, rank, replay_id)
         except Exception as e:
             logger.error("Failed to fetch or run the games: %s", e)
