@@ -39,5 +39,6 @@ services:
     volumes:
       - ./web/public/:/usr/halite-backend/public/
       - ./bots/:/usr/halite-backend/bots/
+      - ../contest:/usr/halite-backend/pacman
     depends_on:
       - migration

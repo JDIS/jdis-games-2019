@@ -10,15 +10,21 @@ logger = logging.getLogger(__name__)
 def play_game(bots):
     games_directory = directories.get_games_directory()
     tmp_directory = directories.get_base_directory() + 'tmp/'
-    halite_executable = directories.get_base_directory() + 'halite/halite'
+    pacman_executable = directories.get_base_directory() + 'pacman/capture.py'
 
     players = []
-    command = [halite_executable, '-q',  '-i ' + games_directory, '-e ' + tmp_directory, '-d 32 32']
+    command = ["python3", pacman_executable, '-q', '--record', '-l', 'RANDOM0']
+    ## TODO: record games to games_directory
 
-    for botId, data in bots.items():
-        launcher = data['language'].value['launcher'].format(data['path'])
+    teamColors = ["-r", "-b"]
+    teamNames = ["--red-name", "--blue-name"]
+
+    for i, (botId, data) in enumerate(bots.items()):
+        command.append(teamColors[i])
+        command.append(data['path'] + "/MyBot.py")
+        command.append(teamNames[i])
+        command.append("Team #" + str(botId))
         players.append(botId)
-        command.append(launcher)
 
     logger.info("Running command: {}".format(str(command)))
     output = check_output(command)
