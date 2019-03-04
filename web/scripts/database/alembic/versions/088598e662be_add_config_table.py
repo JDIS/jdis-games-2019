@@ -32,7 +32,7 @@ def upgrade():
 
     op.bulk_insert(configs,
                    [
-                       {'id': '0', 'round': '0', 'submitions_over': 'false'}
+                       {'id': '0', 'round': '0', 'submitions_over': False}
                    ]
                    )
 
