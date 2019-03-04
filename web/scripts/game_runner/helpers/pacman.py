@@ -34,6 +34,7 @@ def play_game(bots):
 
 
 def parse_game_output(output, players):
+    #TODO: Rewrite completly to support pacman output
     lines = output.decode("utf-8").split('\n')
     rank = [None]*len(players)
     replay_id = ''
