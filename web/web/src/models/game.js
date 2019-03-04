@@ -9,6 +9,7 @@ async function createGame (db, session, request) {
       false,
       'created',
       1,
+      2, // TODO : make max_players dynamic
       session.id,
       null,
       null,
@@ -19,6 +20,7 @@ async function createGame (db, session, request) {
       false,
       'ready',
       4,
+      2, // TODO : make max_players dynamic
       session.id,
       '1',
       '2',
@@ -58,9 +60,10 @@ async function joinGame (db, { id: teamId }, request) {
     throw new Error('Wrong game id');
   }
 
-  const nextId = (await db.one(query.getNextTeamIDForGame, [request.join]))
-    .next_team_count - 1;
-  if (!Number.isInteger(nextId) || nextId >= 4 || nextId < 0) {
+  const result = (await db.one(query.getNextTeamIDForGame, [request.join]))
+  const nextId = result.next_team_count - 1;
+  const maxPlayers = result.max_players;
+  if (!Number.isInteger(nextId) || nextId >= maxPlayers || nextId < 0) {
     throw new Error('Tried to join a fulled game');
   }
 

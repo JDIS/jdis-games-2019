@@ -6,9 +6,9 @@ module.exports = {
   'selectTeams': 'SELECT * FROM teams WHERE admin=false',
   'selectCleanTeams': 'SELECT id, name, bot FROM teams WHERE admin=false AND bot=false',
   'insertGame': `INSERT INTO games(
-    round, ranked, status, next_team_count, team0, team1, team2, team3
+    round, ranked, status, next_team_count, max_players, team0, team1, team2, team3
   )
- VALUES ((SELECT round FROM configs WHERE id=0), $1, $2, $3, $4, $5, $6, $7);`,
+ VALUES ((SELECT round FROM configs WHERE id=0), $1, $2, $3, $4, $5, $6, $7, $8);`,
   'selectBots': 'SELECT * FROM teams WHERE bot=true;',
 
   'selectJoinableGames':
@@ -24,7 +24,7 @@ LEFT JOIN teams AS t2 ON t2.id = games.team2
 LEFT JOIN teams AS t3 ON t3.id = games.team3
 WHERE status='created'
  AND ranked = false
- AND next_team_count < 4
+ AND next_team_count < max_players
  AND (team0 IS null OR team0<>$1)
  AND (team1 IS null OR team1<>$1)
  AND (team2 IS null OR team2<>$1)
@@ -34,7 +34,7 @@ WHERE status='created'
 UPDATE games
 SET next_team_count = next_team_count + 1
 WHERE id=$1
-RETURNING next_team_count`,
+RETURNING next_team_count, max_players`,
   // I know, this should be nicer
   'joinGameAsTeam0': 'UPDATE games SET team0=$1 WHERE id=$2',
   'joinGameAsTeam1': 'UPDATE games SET team1=$1 WHERE id=$2',

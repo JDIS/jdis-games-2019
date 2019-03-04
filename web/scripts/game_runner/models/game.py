@@ -24,6 +24,7 @@ class Game(Base):
     status = Column(Enum(Status))
     round = Column(Integer)
     replay = Column(String)
+    max_players = Column(Integer)
 
     def __repr__(self):
         return "<Game(id='%s', status='%s')>" % (self.id, self.status)

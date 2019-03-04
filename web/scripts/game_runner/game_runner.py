@@ -20,6 +20,7 @@ def main():
             games_ready = database.get_all_ready_games()
             for game in games_ready:
                 teams = [game.team0, game.team1, game.team2, game.team3]
+                teams = teams[0:game.max_players]
                 bots = bots_handler.prepare_bots(teams)
 
                 logger.info("Playing game: {}".format(game.id))
