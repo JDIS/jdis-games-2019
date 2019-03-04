@@ -1,0 +1,109 @@
+{{> start }}
+<div>
+  <h2>Téléverser votre IA</h2>
+  <p>Le fichier téléversé doit avoir une extension <code>.zip</code>.
+  <form action="/team/bot" method="post" enctype="multipart/form-data">
+    <div>
+      <input style="border:1px solid #ddd; padding:1em 1.5em; border-radius:4px; display:inline-block;" accept=".zip" type="file" name="file">
+    </div>
+    <input class="button button-primary" type="submit" value="Téléverser">
+  </form>
+</div>
+
+<hr class="big">
+
+<div>
+  <h2>Démarrer une partie d'entraînement</h2>
+  <p>Vous pouvez démarrer une nouvelle partie pour tester votre IA, soit contre d'autres participants, soit contre le serveur.</p>
+  <form action="/game" method="post">
+    <button name="value" class="button-primary" type="submit" value="players">Démarrer une partie contre les autres participants</button>
+    <button name="value" type="submit" value="bots">Démarrer une partie contre le serveur</button>
+  </form>
+</div>
+
+<hr class="big">
+
+<div>
+  <h2>Rejoindre une partie d'entraînement</h2>
+  {{#if joinableGames}}
+    <p>Vous pouvez rejoindre une partie d'entraînement en attente pour tester votre IA contre les <em>bots</em> des autres participants.</p>
+    <form action="/game/join" method="post">
+      <table>
+        <tr>
+          <th>Créée à</th>
+          <th>Équipe 1</th>
+          <th>Équipe 2</th>
+          <th>Équipe 3</th>
+          <th>Équipe 4</th>
+          <th></th>
+        </tr>
+        {{#each joinableGames}}
+          <tr>
+            <td>{{this.created}}
+            <td>{{#if this.t0name}}{{this.t0name}}{{else}}<span class="faded">Place libre</span>{{/if}}</td>
+            <td>{{#if this.t1name}}{{this.t1name}}{{else}}<span class="faded">Place libre</span>{{/if}}</td>
+            <td>{{#if this.t2name}}{{this.t2name}}{{else}}<span class="faded">Place libre</span>{{/if}}</td>
+            <td>{{#if this.t3name}}{{this.t3name}}{{else}}<span class="faded">Place libre</span>{{/if}}</td>
+            <td>
+              <button type="submit" name="join" value="{{this.id}}">
+                Rejoindre
+              </button>
+            </td>
+          </tr>
+        {{/each}}
+      </table>
+    <form>
+  {{else}}
+    <p>Il n'y a aucune partie déjà en attente. Créez-en une nouvelle en cliquant sur l'un des boutons de la section ci-dessus!</p>
+  {{/if}}
+</div>
+
+<hr class="big">
+
+<div>
+  <h2>Historique des parties</h2>
+  <p>Vous trouverez ci-dessous les parties dans lesquelles votre équipe a participé.</p>
+
+  <div class="list">
+    {{#each relatedGames}}
+      <div class="ranked-{{this.ranked}} list-item">
+
+        <div class="list-content">
+          <div>
+            {{#if this.ranked}}
+              <strong>Partie officielle (round {{this.round}})</strong>
+            {{else}}
+              Partie d'entraînement
+            {{/if}}
+          </div>
+          <div>Créée à {{this.created}}</div>
+          <hr>
+          {{#if this.g0name}}
+            Classement
+            <div>1. {{this.g0name}}</div>
+            <div>2. {{this.g1name}}</div>
+            <div>3. {{this.g2name}}</div>
+            <div>4. {{this.g3name}}</div>
+          {{else}}
+            Équipes
+            <div>- {{#if this.t0name}}{{this.t0name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t1name}}{{this.t1name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t2name}}{{this.t2name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t3name}}{{this.t3name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+          {{/if}}
+          <hr>
+          <div>
+            {{#if this.replay}}
+              <a class="button button-primary" href="/visualizer?path={{this.replay}}">Voir la partie</a>
+            {{else}}
+              <a class="faded button">En attente</a>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+</div>
+
+{{> end }}

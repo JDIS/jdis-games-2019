@@ -1,0 +1,43 @@
+version: "3"
+services:
+  database:
+    ports:
+     - 5432:5432
+    image: postgres
+    env_file:
+      - .env
+
+  migration:
+    build: ./scripts/database/
+    command: bash ./wait.sh
+    env_file:
+      - .env
+    depends_on:
+      - database
+    volumes:
+      - ./scripts/database/:/usr/halite-backend/
+
+  web:
+    ports:
+      - ${PORT}:8080
+    build: ./web/
+    command: npm start
+    env_file:
+      - .env
+    volumes:
+      - ./web:/usr/src
+      - ./bots:/usr/src/bots
+      - /usr/src/node_modules
+    depends_on:
+      - migration
+
+  runner:
+    build: ./scripts/game_runner/
+    command: python game_runner.py
+    env_file:
+      - .env
+    volumes:
+      - ./web/public/:/usr/halite-backend/public/
+      - ./bots/:/usr/halite-backend/bots/
+    depends_on:
+      - migration

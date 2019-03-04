@@ -1,0 +1,97 @@
+{{> start }}
+
+<div>
+  <h2>Changer le round</h2>
+  <form action="/admin/round" method="post">
+    <label>
+      Round
+      <input type="number" name="round" value="{{configs.round}}">
+    </label>
+    <input type="submit" value="Update">
+  </form>
+</div>
+
+<div>
+  <h2>Désactiver la platforme</h2>
+  <form action="/admin/is-over" method="post">
+    <label>
+      {{#if configs.submitions_over}}
+        <button style="background-color:#5cb85c; border-color:#5cb85c; color:white;" type="submit" name="isOver" value="FALSE">
+          Activer
+        </button>
+      {{else}}
+        <button style="background-color:#d9534f; border-color:#d9534f; color:white;" type="submit" name="isOver" value="TRUE">
+          Désactiver
+        </button>
+      {{/if}}
+    </label>
+  </form>
+</div>
+
+<div>
+  <h2>Lancer un match compétitif</h2>
+  <form action="/game/ranked" method="post">
+    <table>
+      <tr>
+        <th>Équipe</th>
+        <th>Bot</th>
+        <th>Membres</th>
+        <th>Match?</th>
+      </tr>
+      {{#each teams}}
+        <tr>
+          <td>{{this.name}}</td>
+          <td>{{this.bot}}</td>
+          <td>{{this.members}}</td>
+          <td><input type="checkbox" name="teams" value="{{this.id}}"></td>
+        </tr>
+      {{/each}}
+    </table>
+    <input type="submit" value="Lancer la partie">
+  </form>
+</div>
+
+<div>
+  <h2>Ranked</h2>
+  <div class="list">
+    {{#each ranked}}
+      <div class="ranked-{{this.ranked}} list-item">
+
+        <div class="list-content">
+          <div>
+            {{#if this.ranked}}
+              <strong>Partie officielle (round {{this.round}})</strong>
+            {{else}}
+              Partie d'entraînement
+            {{/if}}
+          </div>
+          <div>Créée à {{this.created}}</div>
+          <hr>
+          {{#if this.g0name}}
+            Classement
+            <div>1. {{this.g0name}}</div>
+            <div>2. {{this.g1name}}</div>
+            <div>3. {{this.g2name}}</div>
+            <div>4. {{this.g3name}}</div>
+          {{else}}
+            Équipes
+            <div>- {{#if this.t0name}}{{this.t0name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t1name}}{{this.t1name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t2name}}{{this.t2name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+            <div>- {{#if this.t3name}}{{this.t3name}}{{else}}<span class="faded">Pas de <em>bot</em></span>{{/if}}</div>
+          {{/if}}
+          <hr>
+          <div>
+            {{#if this.replay}}
+              <a class="button button-primary" href="/visualizer?path={{this.replay}}">Voir la partie</a>
+            {{else}}
+              <a class="faded button">En attente</a>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+{{> end }}
