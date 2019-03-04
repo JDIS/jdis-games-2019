@@ -845,9 +845,10 @@ def readCommand( argv ):
   if options.replay != None:
     print('Replaying recorded game %s.' % options.replay)
     import pickle
-    recorded = pickle.load(open(options.replay))
-    recorded['display'] = args['display']
-    replayGame(**recorded)
+    with open(options.replay, 'rb') as f:
+        recorded = pickle.load(open(options.replay, 'rb'))
+        recorded['display'] = args['display']
+        replayGame(**recorded)
     sys.exit(0)
 
   # Choose a pacman agent
@@ -992,10 +993,10 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
       print("recorded")
       g.record = pickle.dumps(components)
       with open('replay-%d'%i,'wb') as f:
-        print(game.state.data.score, file=f)
+        f.write(g.record)
 
   if numGames > 1:
-    scores = [game.state.data.score for game in games]
+    scores = [g.state.data.score for g in games]
     redWinRate = [s > 0 for s in scores].count(True)/ float(len(scores))
     blueWinRate = [s < 0 for s in scores].count(True)/ float(len(scores))
     print('Average Score:', sum(scores) / float(len(scores)))

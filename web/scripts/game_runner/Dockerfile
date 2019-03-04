@@ -13,13 +13,13 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update
 RUN apt-get install -y nodejs
 
-WORKDIR /usr/halite-backend/halite
-RUN wget github.com/Sytten/Halite/archive/v1.2.2.zip 
-RUN unzip v1.2.2.zip
-RUN cp -a Halite-1.2.2/environment/. .
-RUN rm -rf Halite-1.2.2
-RUN rm v1.2.2.zip
-RUN make
+# WORKDIR /usr/halite-backend/halite
+# RUN wget github.com/Sytten/Halite/archive/v1.2.2.zip 
+# RUN unzip v1.2.2.zip
+# RUN cp -a Halite-1.2.2/environment/. .
+# RUN rm -rf Halite-1.2.2
+# RUN rm v1.2.2.zip
+# RUN make
 
 WORKDIR /usr/halite-backend
 COPY requirements.txt .

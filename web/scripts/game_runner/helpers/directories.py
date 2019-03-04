@@ -11,10 +11,6 @@ def get_errors_directory(game_id):
     return safe_create_directory(get_base_directory() + 'public/errors/{}/'.format(game_id))
 
 
-def get_halite_directory():
-    return get_base_directory() + 'halite/'
-
-
 def get_base_directory():
     return os.getcwd().split(project_name)[0] + project_name + '/'
 
