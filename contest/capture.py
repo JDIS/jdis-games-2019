@@ -1007,7 +1007,7 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
 
 def save_score(game):
     with open('score', 'w') as f:
-      f.write(game.state.data.score)
+      f.write(str(game.state.data.score))
 
 if __name__ == '__main__':
   """
