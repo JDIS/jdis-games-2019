@@ -1,3 +1,56 @@
+var dx = 10;
+
+var DEFAULT_GRID_SIZE = 30.0
+var GRID_SIZE = DEFAULT_GRID_SIZE;
+var INFO_PANE_HEIGHT = 35
+var BACKGROUND_COLOR = [0,0,0]
+var WALL_COLOR = [0.0/255.0, 51.0/255.0, 255.0/255.0]
+var INFO_PANE_COLOR = [.4,.4,0]
+var SCORE_COLOR = [.9, .9, .9]
+var PACMAN_OUTLINE_WIDTH = 2
+var PACMAN_CAPTURE_OUTLINE_WIDTH = 4
+
+var GHOST_COLORS = [
+    [.9,0,0], // Red
+    [0,.3,.9], // Blue
+    [.98,.41,.07], // Orange
+    [.1,.75,.7], // Green
+    [1.0,0.6,0.0], // Yellow
+    [.4,0.13,0.91], // Purple
+]
+
+var TEAM_COLORS = [GHOST_COLORS[0], GHOST_COLORS[1]];
+
+var GHOST_SHAPE = [
+    [ 0,    0.3 ],
+    [ 0.25, 0.75 ],
+    [ 0.5,  0.3 ],
+    [ 0.75, 0.75 ],
+    [ 0.75, -0.5 ],
+    [ 0.5,  -0.75 ],
+    [-0.5,  -0.75 ],
+    [-0.75, -0.5 ],
+    [-0.75, 0.75 ],
+    [-0.5,  0.3 ],
+    [-0.25, 0.75 ]
+];
+
+var GHOST_SIZE = 0.65;
+var SCARED_COLOR = [1, 1, 1];
+
+var PACMAN_COLOR = [1.0, 1.0, 61/255]
+var PACMAN_SCALE = 0.5;
+var FOOD_COLOR = [1, 1, 1];
+
+var FOOD_SIZE = 0.1;
+var LASER_COLOR = [1, 0, 0];
+var LASER_SIZE = 0.02;
+
+var CAPSULE_COLOR = [1, 0, 0];
+var CAPSULE_SIZE = 0.25;
+
+var WALL_RADIUS = 0.15; 
+
 function processFrame(game, frameNum) {
     var checkSim = false;
     var gameMap = game.frames[frameNum];
@@ -231,7 +284,75 @@ function processFrame(game, frameNum) {
     return stats;
 }
 
-function textToGame(text, seed) {
+function toRGBAString(colorArray) {
+    return `rgba(${colorArray.map(d=>Math.round(d*255)).join(',')}, 1)`
+}
+
+function textToGame(text) {
+    try {
+        const replayData = JSON.parse(text);
+        var {layout, actions, length, redTeamName, blueTeamName} = replayData;
+    } catch(e) {
+        return alert("The klvr file is corrupted.");
+    }
+
+    const width = layout[0].length;
+    const height = layout.length;
+
+    const canvas = document.getElementById("pacman-game-visualizer");
+    const ctx = canvas.getContext("2d");
+
+    ctx.canvas.width  = width * dx;
+    ctx.canvas.height = height * dx + dx;
+
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "right";
+    ctx.fillText(redTeamName, width*dx/2, height*dx+dx);
+
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "blue";
+    ctx.textAlign = "left";
+    ctx.fillText(blueTeamName, width*dx/2, height*dx+dx);
+
+    let players = [];
+    let foods = [];
+    let capsules = [];
+
+    for (let i in layout) {
+        for (let j in layout[i]) {
+            let x = parseInt(j); let y = parseInt(i);
+            let px = layout[i][j];
+            if (px == '%') {
+                ctx.fillStyle = toRGBAString(2*x < width ? TEAM_COLORS[0] : TEAM_COLORS[1]);
+                ctx.fillRect(x*dx, y*dx, dx, dx);
+            } else if ($.isNumeric(px)) {
+                players.push({
+                    index: parseInt(px),
+                    position: [x, y],
+                    team: 2*x < width ? 'red' : 'blue'
+                });
+            } else if (px == '.') {
+                foods.push({
+                    position: [x, y]
+                })
+            } else if (px == 'o') {
+                capsules.push({
+                    position: [x, y]
+                })
+            }
+        }
+    }
+
+    return {actions, players, foods, capsules, width, height}
+    //ctx.rect()
+
+    //GRID_SIZE
+
+    //pacman-game-visualizer
+    
+
+    return;
     var startParse = new Date();
     console.log("Starting parse at", startParse);
     var game = JSON.parse(text)

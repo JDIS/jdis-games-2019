@@ -981,16 +981,20 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
 
     g.record = None
     if record:
-      import time, pickle, game, datetime
+      import time, pickle, game, datetime, json
       #fname = ('recorded-game-%d' % (i + 1)) +  '-'.join([str(t) for t in time.localtime()[1:6]])
       #f = file(fname, 'w')
       components = {'layout': layout, 'agents': [game.Agent() for a in agents], 'actions': g.moveHistory, 'length': length, 'redTeamName': redTeamName, 'blueTeamName':blueTeamName }
+      jsonable_components = {'layout': layout.layoutText, 'actions': g.moveHistory, 'length': length, 'redTeamName': redTeamName, 'blueTeamName':blueTeamName}
       #f.close()
       g.record = pickle.dumps(components)
       replay_id = 'replay-{}'.format(datetime.datetime.now().isoformat())
       print(replay_id)
       with open(replay_id,'wb') as f:
         f.write(g.record)
+
+      with open(replay_id + '.klvr', 'w') as f:
+        json.dump(jsonable_components, f)
 
   if numGames > 1:
     scores = [g.state.data.score for g in games]

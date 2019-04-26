@@ -91,6 +91,7 @@ canvas{
     color: white;
     padding:4vmin;
     border-radius: 4px;
+    width: 100vmin;
 }
 
 .modal{

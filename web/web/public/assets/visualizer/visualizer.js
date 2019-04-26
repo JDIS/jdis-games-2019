@@ -12,7 +12,77 @@ function initPixi() {
     renderer = PIXI.autoDetectRenderer(0, 0, { backgroundColor: 0x000000, antialias: true, transparent: true });
 }
 
-function showGame(game, $container, maxWidth, maxHeight, showmovement, isminimal, offline, seconds) {
+function showGame({actions, players, foods, capsules, width}) {
+    const canvas = document.getElementById("pacman-game-visualizer");
+    const ctx = canvas.getContext("2d");
+
+    for (let {position} of foods) {
+        const [x, y] = position;
+        ctx.beginPath();
+        ctx.arc(x*dx + dx/2, y*dx + dx/2, Math.max(dx/10, 1), 0, 2 * Math.PI);
+        ctx.fillStyle = toRGBAString(2*x < width ? TEAM_COLORS[0] : TEAM_COLORS[1]);
+        ctx.fill();
+    }
+
+    for (let {position} of capsules) {
+        const [x, y] = position;
+        ctx.beginPath();
+        ctx.arc(x*dx + dx/2, y*dx + dx/2, Math.max(dx/3, 2), 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+    }
+
+    let index = 0;
+
+    const interval = setInterval(() => {
+        let [a_index, a_move] = actions[index];
+        for (let i in players) {
+            const {index, position, team} = players[i];
+            if (a_index+1 == index) {
+                
+                // Black out old position
+                let [x, y] = position;
+                ctx.fillStyle = "#1a1a1a";
+                ctx.fillRect(x*dx, y*dx, dx, dx);
+
+                // Go to next position
+                switch(a_move) {
+                    case "East":
+                    ++x;
+                    break;
+                    case "West":
+                    --x;
+                    break;
+                    case "North":
+                    --y;
+                    break;
+                    case "South":
+                    ++y;
+                    break;
+                }
+                players[i].position = [x, y];
+
+                // Draw ghost
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                ctx.moveTo(x*dx, y*dx);
+                for (let s of GHOST_SHAPE) {
+                    ctx.lineTo((s[0]/2 + x + 0.5)*dx, (s[1]/2 + y + 0.5)*dx);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+        ++index;
+        if (index >= actions.length) {
+            clearInterval(interval);
+        }
+    }, 100);
+
+ 
+
+    return;
+
     if(renderer == null) initPixi();
 
     $container.empty();
