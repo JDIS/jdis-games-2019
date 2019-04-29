@@ -15,7 +15,6 @@ def play_game(bots):
 
     players = []
     command = ["python3", pacman_executable, '-q', '--record', '-l', 'RANDOM0']
-    ## TODO: record games to games_directory
 
     teamColors = ["-r", "-b"]
     teamNames = ["--red-name", "--blue-name"]
@@ -31,11 +30,12 @@ def play_game(bots):
     output = check_output(command)
     rank, replay_id = parse_game_output(output, players)
 
+    shutil.move(f"{directories.get_base_directory()}{replay_id}.klvr", f"{games_directory}{replay_id}.klvr")
+
     return rank, replay_id
 
 
 def parse_game_output(output, players):
-    #TODO: Rewrite completly to support pacman output
     lines = output.decode("utf-8").split('\n')
     scores = [0]*len(players)
     replay_id = ''
