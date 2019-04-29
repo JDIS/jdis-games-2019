@@ -985,7 +985,6 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
       #fname = ('recorded-game-%d' % (i + 1)) +  '-'.join([str(t) for t in time.localtime()[1:6]])
       #f = file(fname, 'w')
       components = {'layout': layout, 'agents': [game.Agent() for a in agents], 'actions': g.moveHistory, 'length': length, 'redTeamName': redTeamName, 'blueTeamName':blueTeamName }
-      jsonable_components = {'layout': layout.layoutText, 'actions': g.moveHistory, 'length': length, 'redTeamName': redTeamName, 'blueTeamName':blueTeamName}
       #f.close()
       g.record = pickle.dumps(components)
       replay_id = 'replay-{}'.format(datetime.datetime.now().isoformat())
@@ -993,8 +992,20 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
       with open(replay_id,'wb') as f:
         f.write(g.record)
 
+      # IB: Added basic game->json conversion for js graphic display
       with open(replay_id + '.klvr', 'w') as f:
-        json.dump(jsonable_components, f)
+        import textDisplay
+        states = []
+        class js_recorded(textDisplay.PacmanGraphics):
+          def pause(self):
+            pass
+          def draw(self, state):
+            states.append(str(state))
+          def finish(self):
+            json_components = {'history': states, 'redTeamName': redTeamName, 'blueTeamName': blueTeamName}
+            json.dump(json_components, f)
+
+        replayGame(layout, agents, g.moveHistory, js_recorded(), length, redTeamName, blueTeamName)
 
   if numGames > 1:
     scores = [g.state.data.score for g in games]
