@@ -58,29 +58,43 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
     const canvas = document.getElementById("pacman-game-visualizer");
     const ctx = canvas.getContext("2d");
 
+    // Timer at the bottom of the screen
+    const timerSize = 6;
+    const timerOffset = 6;
+
     // Update canvas' size
     const width = history[0][0].length;
     const height = history[0].length;
     ctx.canvas.width = width * GRID_SIZE;
-    ctx.canvas.height = height * GRID_SIZE + GRID_SIZE;
+    ctx.canvas.height = height * GRID_SIZE + GRID_SIZE + timerSize + timerOffset;
+
     // Scale up to GRID_SIZE
     ctx.scale(GRID_SIZE, GRID_SIZE);
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
 
-    // Add team names
+    // Setup text
     ctx.font = "1px Arial";
+
+    // Add team names
+    const centerText = " vs ";
+    const centerTextWidth = ctx.measureText(centerText).width;
+    ctx.fillStyle = "#FFF";
+    ctx.textAlign = "center";
+    ctx.fillText(centerText, width/2, height+1);
+
+    //TODO: Fix ~possible~ probable team name overflow w/ ellipsis or font size
     ctx.fillStyle = "red";
     ctx.textAlign = "right";
-    ctx.fillText(redTeamName, width/2, height+1);
+    ctx.fillText(redTeamName, (width-centerTextWidth)/2, height+1);
 
-    ctx.font = "1px Arial";
     ctx.fillStyle = "blue";
     ctx.textAlign = "left";
-    ctx.fillText(blueTeamName, width/2, height+1);
+    ctx.fillText(blueTeamName, (width+centerTextWidth)/2, height+1);
 
     // Display walls (constant)
+    // TODO: Neon styling like the original python game ?
     for (let i in history[0]) {
         for (let j in history[0][i]) {
             let x = parseInt(j); let y = parseInt(i);
@@ -92,14 +106,30 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
         }
     }
 
-    const clearSquare = (x, y) => {
-        ctx.fillStyle = '#1a1a1a'
-        ctx.fillRect(x, y, 1, 1);
-    }
+    let lastScoreWidth = 0;
+    let lastTimeWidth = 0;
+    const processFrame = (index) => {
+        // Print score
+        let score = scores[index];
+        ctx.clearRect(0, height, lastScoreWidth, 1);
+        lastScoreWidth = ctx.measureText(score).width;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "left";
+        ctx.fillText(score, 0, height + 1);
+        
+        // Print time
+        let time = `Time: ${history.length - index - 1}`;
+        ctx.clearRect(width-lastTimeWidth, height, lastTimeWidth, 1);
+        lastTimeWidth = ctx.measureText(time).width;
+        ctx.textAlign = "right";
+        ctx.fillText(time, width, height+1);
 
-    let index = 0;
-    // Play history
-    const interval = setInterval(() => {
+        // Bar graph of time
+        ctx.clearRect(0, height+1, width, (timerSize + timerOffset) / GRID_SIZE);
+        ctx.fillStyle = '#ffff00';
+        ctx.fillRect(0, height+1+(timerOffset/GRID_SIZE), width * (index + 1) / history.length, (timerSize) / GRID_SIZE);
+        
+        // Print game
         let game = history[index];
         for (let i in game) {
             for (let j in game[i]) {
@@ -108,9 +138,10 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                 if (px == '%') { // Skip walls
                     continue;
                 }
-                clearSquare(x, y);
+                ctx.clearRect(x, y, 1, 1);
                 if (px == 'G') { // Ghost
-                    ctx.fillStyle = '#FFFFFF';
+                    // TODO: Eyes
+                    ctx.fillStyle = "#FFFFFF";
                     ctx.beginPath();
                     ctx.moveTo(GHOST_SHAPE[0] + x, GHOST_SHAPE[1] + y);
                     for (let s of GHOST_SHAPE) {
@@ -120,13 +151,15 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     ctx.fill();
                     
                 } else if (px == '>' || px == '<' || px == 'v' || px == "^") { // Pacman
-                    w = 30
-                    delta = w/2
+                    // Yellow cirle
                     ctx.beginPath();
                     ctx.arc(x + 0.5, y + 0.5, 0.5, 0, 2 * Math.PI);
                     ctx.fillStyle = "yellow";
                     ctx.fill();
-                    //ctx.globalCompositeOperation = 'source-in';
+                    if ((x+y) % 2 == 0) {
+                        continue; // Eating animation
+                    }
+                    // Draw mouth
                     ctx.beginPath();
                     switch(px) {
                         case ">":
@@ -153,8 +186,6 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     ctx.closePath();
                     ctx.fillStyle = "#1a1a1a";
                     ctx.fill();
-                    //ctx.stroke();
-                    //ctx.globalCompositeOperation = 'source-over';
                     
                 } else if (px == '.') { // Food
                     ctx.beginPath();
@@ -163,30 +194,34 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     ctx.fill();
                 } else if (px == 'o') { // Capsule
                     ctx.beginPath();
-                    ctx.arc(x + 0.5, y + 0.5, 0.5, 0, 2 * Math.PI);
+                    ctx.arc(x + 0.5, y + 0.5, 0.3, 0, 2 * Math.PI);
                     ctx.fillStyle = "white";
                     ctx.fill();
                 }
             }
         }
+    }
 
-        ++index;
-        if (index >= history.length) {
-            clearInterval(interval);
-        }
-    }, 250);
-    return;
-}
-
-function textFromURL(replayName, $container, callback) {
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", "https://s3.amazonaws.com/halitereplaybucket/"+replayName, true);
-    oReq.onload = function (oEvent) {
-        if (oReq.status != 404) {
-            callback(textToGame(oReq.response, replayName));
-        } else {
-            $container.html("<h1>Gamefile not found</h1><p>The gamefile titled \""+replayName+"\" could not be found. If this problem persists, post of the forums or email us at halite@halite.io.</h1>");
+    let currentFrame = 0;
+    let stopTime = 5000;
+    let lastFrameTime = 0;
+    
+    // Main loop
+    const loop = () => {
+        requestAnimationFrame(loop);
+        let t = Date.now();
+        let timePerFrame = +$("#pacman_speed").val();
+        if (lastFrameTime + timePerFrame <= t) {
+            lastFrameTime = t;
+            processFrame(currentFrame);
+            ++currentFrame;
+            if (currentFrame >= history.length) {
+                lastFrameTime = t + stopTime;
+                currentFrame = 0;
+            }
         }
     }
-    oReq.send(null);
+    loop();
+
+    return;
 }
