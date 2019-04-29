@@ -30,7 +30,7 @@ def play_game(bots):
     output = check_output(command)
     rank, replay_id = parse_game_output(output, players)
 
-    shutil.move(f"{directories.get_base_directory()}{replay_id}.klvr", f"{games_directory}{replay_id}.klvr")
+    shutil.move(f"{directories.get_base_directory()}{replay_id}", f"{games_directory}{replay_id}")
 
     return rank, replay_id
 
@@ -51,4 +51,4 @@ def parse_game_output(output, players):
     players = np.array(players)
     ranks = players[indices]
 
-    return ranks.tolist(), replay_id
+    return ranks.tolist(), replay_id + '.klvr'
