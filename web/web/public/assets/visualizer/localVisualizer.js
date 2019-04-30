@@ -19,8 +19,7 @@ $(function () {
             reader.onload = (function(filename) { // finished reading file data.
                 return function(e2) {
                     console.log('Fetched replay file.');
-                    var fsHeight = $("#fileSelect").outerHeight();
-                    showGame(textToGame(e2.target.result, filename), $("#displayArea"), null, -fsHeight, true, false, true);
+                    showGame(textToGame(e2.target.result));
                 };
             })(filename);
             reader.readAsText(request.response);
@@ -37,9 +36,7 @@ $(function () {
             return function(e2) {
                 $("#displayArea").empty();
                 $("label[for=filePicker]").text("Choisir un autre fichier");
-                var fsHeight = $("#fileSelect").outerHeight();
-                console.log(filename)
-                showGame(textToGame(e2.target.result, filename), $("#displayArea"), null, -fsHeight, true, false, true);
+                showGame(textToGame(e2.target.result));
             };
         })(file.name);
         reader.readAsText(file); // start reading the file data.

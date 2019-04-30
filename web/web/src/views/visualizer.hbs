@@ -8,11 +8,18 @@
 <div id="pageContent" class="pageContent text-center">
     <div id="displayArea" class="col-sm-12 text-center">
         <h2 style="margin-top: 20px;">Sélectionnez ou déposez un fichier de jeu ici</h2>
-        <p>Le fichier doit avoir une extension <code>.hlt</code>.
+        <p>Le fichier doit avoir une extension <code>.klvr</code>.
     </div>
     <div id="fileSelect" class="col-sm-12 text-center">
-        <label for="filePicker" class="button button-primary">Sélectionner un fichier</label>
-        <input type="file" id="filePicker" accept=".hlt" style="display: none;">
+        <label for="filePicker" class="button  button-primary">Sélectionner un fichier</label>
+        <input type="file" id="filePicker" accept=".klvr" style="display: none;">
+    </div>
+
+    <canvas id="pacman-game-visualizer"></canvas>
+    <div>
+        <label for="pacman_speed" style="display:initial;float:left;">Replay speed: </label>
+        <input type="range" id="pacman_speed" name="pacman_speed"
+                min="10" max="1000" value="200" style="width: 50vmin;float:left;">
     </div>
 </div>
 
