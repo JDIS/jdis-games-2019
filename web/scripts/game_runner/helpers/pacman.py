@@ -7,14 +7,20 @@ from subprocess import check_output
 
 logger = logging.getLogger(__name__)
 
+def safe_move(src, dest):
+    try:
+        shutil.move(src, dest)
+    except IOError as e:
+        os.makedirs(os.path.dirname(dest))
+        shutil.move(src, dest)
 
 def play_game(bots):
     games_directory = directories.get_games_directory()
     tmp_directory = directories.get_base_directory() + 'tmp/'
-    pacman_executable = directories.get_base_directory() + 'pacman/capture.py'
+    pacman_cwd = directories.get_base_directory() + 'pacman/'
 
     players = []
-    command = ["python3", pacman_executable, '-q', '--record', '-l', 'RANDOM0']
+    command = ["python3", "-m", "pacman.capture", '-q', '--record', '-l', 'RANDOM0']
 
     teamColors = ["-r", "-b"]
     teamNames = ["--red-name", "--blue-name"]
@@ -27,10 +33,10 @@ def play_game(bots):
         players.append(botId)
 
     logger.info("Running command: {}".format(str(command)))
-    output = check_output(command)
+    output = check_output(command, cwd=pacman_cwd)
     rank, replay_id = parse_game_output(output, players)
 
-    shutil.move(f"{directories.get_base_directory()}{replay_id}", f"{games_directory}{replay_id}")
+    safe_move(f"{pacman_cwd}{replay_id}", f"{games_directory}{replay_id}")
 
     return rank, replay_id
 
