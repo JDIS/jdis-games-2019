@@ -11,10 +11,9 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
-from graphicsUtils import *
 import math, time
-from game import Directions
+from pacman.graphicsUtils import *
+from pacman.game import Directions
 
 ###########################
 #  GRAPHICS DISPLAY CODE  #

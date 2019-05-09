@@ -16,10 +16,10 @@
   Interfaces for capture agents and agent factories
 """
 
-from game import Agent
-import distanceCalculator
-from util import nearestPoint
-import util
+from pacman.game import Agent
+import pacman.distanceCalculator as distanceCalculator
+from pacman.util import nearestPoint
+import pacman.util as util
 
 # Note: the following class is not used, but is kept for backwards
 # compatibility with team submissions that try to import it.

@@ -16,7 +16,6 @@ import sys
 import inspect
 import heapq, random
 
-
 class FixedRandom:
     def __init__(self):
         fixedState = (3, (2147483648, 507801126, 683453281, 310439348, 2597246090, \

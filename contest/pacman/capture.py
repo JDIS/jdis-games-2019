@@ -48,18 +48,18 @@ The keys are
   P1: 'a', 's', 'd', and 'w' to move
   P2: 'l', ';', ',' and 'p' to move
 """
-from game import GameStateData
-from game import Game
-from game import Directions
-from game import Actions
-from util import nearestPoint
-from util import manhattanDistance
-from game import Grid
-from game import Configuration
-from game import Agent
-from game import reconstituteGrid
-import sys, util, types, time, random, imp
-import keyboardAgents
+import sys, types, time, random, imp
+from pacman.game import GameStateData
+from pacman.game import Game
+from pacman.game import Directions
+from pacman.game import Actions
+from pacman.util import nearestPoint
+from pacman.util import manhattanDistance
+from pacman.game import Grid
+from pacman.game import Configuration
+from pacman.game import Agent
+from pacman.game import reconstituteGrid
+from pacman.keyboardAgents import KeyboardAgent, KeyboardAgent2
 
 # If you change these, you won't affect the server, so you can't cheat
 KILL_POINTS = 0
@@ -74,7 +74,7 @@ DUMP_FOOD_ON_DEATH = True # if we have the gameplay element that dumps dots on d
 SCARED_TIME = 40
 
 def noisyDistance(pos1, pos2):
-  return int(util.manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
+  return int(manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
@@ -285,7 +285,7 @@ class GameState:
       seen = False
       enemyPos = state.getAgentPosition(enemy)
       for teammate in team:
-        if util.manhattanDistance(enemyPos, state.getAgentPosition(teammate)) <= SIGHT_RANGE:
+        if manhattanDistance(enemyPos, state.getAgentPosition(teammate)) <= SIGHT_RANGE:
           seen = True
       if not seen: state.data.agentStates[enemy].configuration = None
     return state
@@ -819,17 +819,17 @@ def readCommand( argv ):
   #   import pygameDisplay
   #    args['display'] = pygameDisplay.PacmanGraphics()
   if options.textgraphics:
-    import textDisplay
+    import pacman.textDisplay as textDisplay
     args['display'] = textDisplay.PacmanGraphics()
   elif options.quiet:
-    import textDisplay
+    import pacman.textDisplay as textDisplay
     args['display'] = textDisplay.NullGraphics()
   elif options.super_quiet:
-    import textDisplay
+    import pacman.textDisplay as textDisplay
     args['display'] = textDisplay.NullGraphics()
     args['muteAgents'] = True
   else:
-    import captureGraphicsDisplay
+    import pacman.captureGraphicsDisplay as captureGraphicsDisplay
     # Hack for agents writing to the display
     captureGraphicsDisplay.FRAME_TIME = 0
     args['display'] = captureGraphicsDisplay.PacmanGraphics(options.red, options.blue, options.zoom, 0, capture=True)
@@ -875,7 +875,7 @@ def readCommand( argv ):
     args['agents'][index] = agent
 
   # Choose a layout
-  import layout
+  import pacman.layout as layout
   layouts = []
   for i in range(options.numGames):
     if options.layout == 'RANDOM':
@@ -903,7 +903,7 @@ def randomLayout(seed = None):
     seed = random.randint(0,99999999)
   # layout = 'layouts/random%08dCapture.lay' % seed
   # print 'Generating random layout in %s' % layout
-  import mazeGenerator
+  import pacman.mazeGenerator as mazeGenerator
   return mazeGenerator.generateMaze(seed)
 
 import traceback
@@ -969,7 +969,7 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
     layout = layouts[i]
     if beQuiet:
         # Suppress output and graphics
-        import textDisplay
+        import pacman.textDisplay as textDisplay
         gameDisplay = textDisplay.NullGraphics()
         rules.quiet = True
     else:
@@ -981,20 +981,21 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
 
     g.record = None
     if record:
-      import time, pickle, game, datetime, json
+      import time, pickle, datetime, json
+      import pacman.game as game
       #fname = ('recorded-game-%d' % (i + 1)) +  '-'.join([str(t) for t in time.localtime()[1:6]])
       #f = file(fname, 'w')
       components = {'layout': layout, 'agents': [game.Agent() for a in agents], 'actions': g.moveHistory, 'length': length, 'redTeamName': redTeamName, 'blueTeamName':blueTeamName }
       #f.close()
       g.record = pickle.dumps(components)
-      replay_id = 'replay-{}'.format(datetime.datetime.now().isoformat())
+      replay_id = 'replays/replay-{}'.format(datetime.datetime.now().isoformat())
       print(replay_id)
       with open(replay_id,'wb') as f:
         f.write(g.record)
 
       # IB: Added basic game->json conversion for js graphic display
       with open(replay_id + '.klvr', 'w') as f:
-        import textDisplay
+        import pacman.textDisplay as textDisplay
         states = []
         class js_recorded(textDisplay.PacmanGraphics):
           def pause(self):
