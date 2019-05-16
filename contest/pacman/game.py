@@ -450,7 +450,7 @@ class GameStateData:
             if agentState.isPacman:
                 map[x][y] = self._pacStr( agent_dir )
             else:
-                map[x][y] = self._ghostStr( agent_dir )
+                map[x][y] = self._ghostStr( agent_dir, agentState.scaredTimer )
 
         for x, y in self.capsules:
             map[x][y] = 'o'
@@ -474,15 +474,16 @@ class GameStateData:
             return '>'
         return '<'
 
-    def _ghostStr( self, dir ):
-        return 'G'
+    def _ghostStr( self, dir, is_scared ):
+        c = 'E'
         if dir == Directions.NORTH:
-            return 'M'
-        if dir == Directions.SOUTH:
-            return 'W'
-        if dir == Directions.WEST:
-            return '3'
-        return 'E'
+            c = 'M'
+        elif dir == Directions.SOUTH:
+            c = 'W'
+        elif dir == Directions.WEST:
+            c = 'G'
+
+        return c.lower() if is_scared else c
 
     def initialize( self, layout, numGhostAgents ):
         """

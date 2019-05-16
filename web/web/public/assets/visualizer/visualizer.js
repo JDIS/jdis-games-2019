@@ -139,9 +139,11 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     continue;
                 }
                 ctx.clearRect(x, y, 1, 1);
-                if (px == 'G') { // Ghost
-                    // TODO: Eyes
-                    ctx.fillStyle = "#FFFFFF";
+                let ghostPxs = ['M', 'W', 'G', 'E'];
+                if (~ghostPxs.indexOf(px.toUpperCase())) { // Ghost
+                    // Ghost shape -- see graphicsDisplay.py:drawGhost
+                    let isScared = px.toLowerCase() == px; // Lower case if scared
+                    ctx.fillStyle = toRGBAString(isScared ? SCARED_COLOR : GHOST_COLORS[0]); // TODO: Ghost color index
                     ctx.beginPath();
                     ctx.moveTo(GHOST_SHAPE[0] + x, GHOST_SHAPE[1] + y);
                     for (let s of GHOST_SHAPE) {
@@ -149,7 +151,29 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     }
                     ctx.closePath();
                     ctx.fill();
-                    
+
+                    // Eyes
+                    let dx = 0, dy = 0;
+                    px = px.toUpperCase();
+                    if (px == 'M') // North
+                        dy += .2;
+                    else if (px == 'W') //South
+                        dy -= .2;
+                    else if (px == 'E') //East
+                        dx += .2;
+                    else if (px == 'G') //West
+                        dx -= .2;
+
+                    ctx.fillStyle = '#FFF';
+                    ctx.beginPath();
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(-0.3 + dx / 1.5) , y + GHOST_SIZE*(0.3-dy/1.5), GHOST_SIZE * 0.2, 0, 2 * Math.PI); // left
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(0.3 + dx / 1.5) , y + GHOST_SIZE*(0.3-dy/1.5), GHOST_SIZE * 0.2, 0, 2 * Math.PI); //right
+                    ctx.fill();
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(-0.3+dx), y + GHOST_SIZE * (0.3-dy), GHOST_SIZE*0.08, 0, 2*Math.PI) // left pupil
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(0.3+dx), y + GHOST_SIZE * (0.3-dy), GHOST_SIZE*0.08, 0, 2*Math.PI) // right pupil
+                    ctx.fill();
                 } else if (px == '>' || px == '<' || px == 'v' || px == "^") { // Pacman
                     // Yellow cirle
                     ctx.beginPath();
