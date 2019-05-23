@@ -23,8 +23,8 @@ app.use(require('koa-views')(`${__dirname}/src/views`, {
   map: { hbs: 'handlebars' },
   options: {
     partials: {
-      start: 'start',
-      end: 'end',
+      start: 'partials/start',
+      end: 'partials/end',
     },
   }
 }));
