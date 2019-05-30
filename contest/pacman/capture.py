@@ -473,7 +473,7 @@ class AgentRules:
   filterForAllowedActions = staticmethod( filterForAllowedActions )
 
   def canFreeze( agentState ):
-    return agentState.freezeTimer == FREEZE_TIME
+    return agentState.freezeTimer >= FREEZE_TIME
 
   canFreeze = staticmethod( canFreeze )
 
@@ -991,7 +991,6 @@ def replayGame( layout, agents, actions, display, length, redTeamName, blueTeamN
     display.initialize(state.data)
 
     for action in actions:
-      time.sleep(0.05)
       # Execute the action
       state = state.generateSuccessor( *action )
       # Change the display

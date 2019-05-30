@@ -303,8 +303,6 @@ class Actions:
 
     TOLERANCE = .001
 
-    _FREEZE = 'FREEZE'
-
     def reverseDirection(action):
         if action == Directions.NORTH:
             return Directions.SOUTH
