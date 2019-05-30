@@ -129,8 +129,8 @@ class AgentState:
         self.scaredTimer = 0
         self.numCarrying = 0
         self.numReturned = 0
-        self.freezeTimer = 30
-        self.frozenTimer = 0
+        self.freezeTimer = 30 # Cooldown to use the freeze ability
+        self.frozenTimer = 0 # Cooldown to be frozen
 
     def __str__( self ):
         if self.isPacman:
@@ -452,7 +452,7 @@ class GameStateData:
             x,y = [int( i ) for i in nearestPoint( agentState.configuration.pos )]
             agent_dir = agentState.configuration.direction
             if agentState.isPacman:
-                map[x][y] = self._pacStr( agent_dir )
+                map[x][y] = self._pacStr( agent_dir, agentState.frozenTimer )
             else:
                 map[x][y] = self._ghostStr( agent_dir ,
                                             agentState.scaredTimer ,
@@ -471,7 +471,9 @@ class GameStateData:
         else:
             return ' '
 
-    def _pacStr( self, dir ):
+    def _pacStr( self, dir , is_frozen ):
+        if is_frozen:
+            return 'X'
         if dir == Directions.NORTH:
             return 'v'
         if dir == Directions.SOUTH:
