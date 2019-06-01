@@ -436,9 +436,9 @@ class CaptureRules:
 
   def getMaxTotalTime(self, agentIndex):
     return 900  # Move limits should prevent this from ever happening
-
+ 
   def getMaxStartupTime(self, agentIndex):
-    return 15 # 15 seconds for registerInitialState
+    return 5 # 5 seconds for registerInitialState
 
   def getMoveWarningTime(self, agentIndex):
     return 1  # One second per move
