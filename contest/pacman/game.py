@@ -52,6 +52,10 @@ class Directions:
     EAST = 'East'
     WEST = 'West'
     STOP = 'Stop'
+    JUMP_NORTH = 'Jump_North'
+    JUMP_SOUTH = 'Jump_South'
+    JUMP_EAST = 'Jump_East'
+    JUMP_WEST = 'Jump_West'
 
     LEFT =       {NORTH: WEST,
                    SOUTH: EAST,
@@ -129,6 +133,7 @@ class AgentState:
         self.scaredTimer = 0
         self.numCarrying = 0
         self.numReturned = 0
+        self.jumpTimer = 30 # Cooldown to use the jump ability
 
     def __str__( self ):
         if self.isPacman:
@@ -139,7 +144,7 @@ class AgentState:
     def __eq__( self, other ):
         if other == None:
             return False
-        return self.configuration == other.configuration and self.scaredTimer == other.scaredTimer
+        return self.configuration == other.configuration and self.scaredTimer == other.scaredTimer and self.jumpTimer == other.jumpTimer
 
     def __hash__(self):
         return hash(hash(self.configuration) + 13 * hash(self.scaredTimer))
@@ -150,6 +155,7 @@ class AgentState:
         state.scaredTimer = self.scaredTimer
         state.numCarrying = self.numCarrying
         state.numReturned = self.numReturned
+        state.jumpTimer = self.jumpTimer
         return state
 
     def getPosition(self):
@@ -293,6 +299,10 @@ class Actions:
                    Directions.SOUTH: (0, -1),
                    Directions.EAST:  (1, 0),
                    Directions.WEST:  (-1, 0),
+                   Directions.JUMP_NORTH: (0, 2),
+                   Directions.JUMP_SOUTH: (0, -2),
+                   Directions.JUMP_EAST:  (2, 0),
+                   Directions.JUMP_WEST:  (-2, 0),
                    Directions.STOP:  (0, 0)}
 
     _directionsAsList = list(_directions.items())
@@ -342,8 +352,10 @@ class Actions:
             dx, dy = vec
             next_y = y_int + dy
             next_x = x_int + dx
-            if not walls[next_x][next_y]: possible.append(dir)
 
+            # Bound validation
+            if next_x < walls.width and next_y < walls.height:
+                if not walls[next_x][next_y]: possible.append(dir)
         return possible
 
     getPossibleActions = staticmethod(getPossibleActions)
