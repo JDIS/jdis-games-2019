@@ -72,6 +72,7 @@ TOTAL_FOOD = 60
 DUMP_FOOD_ON_DEATH = True # if we have the gameplay element that dumps dots on death
 
 SCARED_TIME = 40
+JUMP_TIME = 30
 
 def noisyDistance(pos1, pos2):
   return int(manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
@@ -114,6 +115,7 @@ class GameState:
     AgentRules.applyAction( state, action, agentIndex )
     AgentRules.checkDeath(state, agentIndex)
     AgentRules.decrementTimer(state.data.agentStates[agentIndex])
+    AgentRules.incrementTimer(state.data.agentStates[agentIndex])
 
     # Book keeping
     state.data._agentMoved = agentIndex
@@ -457,13 +459,21 @@ class AgentRules:
     agentState = state.getAgentState(agentIndex)
     conf = agentState.configuration
     possibleActions = Actions.getPossibleActions( conf, state.data.layout.walls )
+
     return AgentRules.filterForAllowedActions( agentState, possibleActions)
   getLegalActions = staticmethod( getLegalActions )
 
   def filterForAllowedActions(agentState, possibleActions):
+    # If jump is on cooldown, remove jump actions
+    if not AgentRules.canJump(agentState):
+      possibleActions = [move for move in possibleActions if "Jump_" not in move]
     return possibleActions
   filterForAllowedActions = staticmethod( filterForAllowedActions )
 
+  def canJump( agentState ):
+    return agentState.jumpTimer >= JUMP_TIME
+
+  canJump = staticmethod( canJump )
 
   def applyAction( state, action, agentIndex ):
     """
@@ -475,6 +485,11 @@ class AgentRules:
 
     # Update Configuration
     agentState = state.data.agentStates[agentIndex]
+
+    # Jump Cooldown
+    if "Jump_" in action:
+      agentState.jumpTimer = 0
+
     speed = 1.0
     # if agentState.isPacman: speed = 0.5
     vector = Actions.directionToVector( action, speed )
@@ -555,7 +570,6 @@ class AgentRules:
       else: otherTeam = state.getRedTeamIndices()
       for index in otherTeam:
         state.data.agentStates[index].scaredTimer = SCARED_TIME
-
   consume = staticmethod( consume )
 
   def decrementTimer(state):
@@ -564,6 +578,13 @@ class AgentRules:
       state.configuration.pos = nearestPoint( state.configuration.pos )
     state.scaredTimer = max( 0, timer - 1 )
   decrementTimer = staticmethod( decrementTimer )
+
+  def incrementTimer(state):
+    timer = state.jumpTimer
+    if timer == 1:
+      state.configuration.pos = nearestPoint( state.configuration.pos )
+    state.jumpTimer = min( JUMP_TIME, timer + 1 )
+  incrementTimer = staticmethod( incrementTimer )
 
   def dumpFoodFromDeath(state, agentState, agentIndex):
     if not (DUMP_FOOD_ON_DEATH):
@@ -690,6 +711,7 @@ class AgentRules:
             agentState.isPacman = False
             agentState.configuration = agentState.start
             agentState.scaredTimer = 0
+            agentState.jumpTimer = 0
           else:
             score = KILL_POINTS
             if state.isOnRedTeam(agentIndex):
@@ -698,6 +720,7 @@ class AgentRules:
             otherAgentState.isPacman = False
             otherAgentState.configuration = otherAgentState.start
             otherAgentState.scaredTimer = 0
+            otherAgentState.jumpTimer = 0
     else: # Agent is a ghost
       for index in otherTeam:
         otherAgentState = state.data.agentStates[index]
@@ -716,6 +739,7 @@ class AgentRules:
             otherAgentState.isPacman = False
             otherAgentState.configuration = otherAgentState.start
             otherAgentState.scaredTimer = 0
+            otherAgentState.jumpTimer = 0
           else:
             score = KILL_POINTS
             if state.isOnRedTeam(agentIndex):
@@ -724,6 +748,7 @@ class AgentRules:
             agentState.isPacman = False
             agentState.configuration = agentState.start
             agentState.scaredTimer = 0
+            agentState.jumpTimer = 0
   checkDeath = staticmethod( checkDeath )
 
   def placeGhost(state, ghostState):
