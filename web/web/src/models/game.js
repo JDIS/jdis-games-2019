@@ -12,36 +12,31 @@ async function createGame (db, session, request) {
       2, // TODO : make max_players dynamic
       session.id,
       null,
-      null,
-      null,
     ]);
   } else {
     await db.none(query.insertGame, [
       false,
       'ready',
-      4,
+      2,
       2, // TODO : make max_players dynamic
       session.id,
       '1',
-      '2',
-      '3',
     ]);
   }
 }
 module.exports.createGame = createGame;
 
 module.exports.createRanked = async (db, session, request) => {
-  if (request.teams.length !== 4) {
-    throw new Error('Should submit with 4 teams');
+  if (request.teams.length !== 2) {
+    throw new Error('Should submit with 2 teams');
   }
   await db.none(query.insertGame, [
     true,
     'ready',
-    4,
+    2,
+    2,
     request.teams[0],
     request.teams[1],
-    request.teams[2],
-    request.teams[3],
   ]);
 }
 
@@ -64,18 +59,14 @@ async function joinGame (db, { id: teamId }, request) {
   const nextId = result.next_team_count - 1;
   const maxPlayers = result.max_players;
   if (!Number.isInteger(nextId) || nextId >= maxPlayers || nextId < 0) {
-    throw new Error('Tried to join a fulled game');
+    throw new Error('Tried to join a full game');
   }
 
   // This should (but never will) be refactored to an another table
   if (nextId === 0) {
     return db.none(query.joinGameAsTeam0, [teamId, request.join]);
   } else if (nextId === 1) {
-    return db.none(query.joinGameAsTeam1, [teamId, request.join]);
-  } else if (nextId === 2) {
-    return db.none(query.joinGameAsTeam2, [teamId, request.join]);
-  } else if (nextId === 3) {
-    await db.none(query.joinGameAsTeam3, [teamId, request.join]);
+    await db.none(query.joinGameAsTeam1, [teamId, request.join]);
     return db.none(query.readyGame, [request.join]);
   }
 }
