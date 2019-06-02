@@ -467,6 +467,10 @@ class AgentRules:
   getLegalActions = staticmethod( getLegalActions )
 
   def filterForAllowedActions(agentState, possibleActions):
+    # If jump is on cooldown, remove jump actions
+    if not AgentRules.canJump(agentState):
+      possibleActions = [move for move in possibleActions if "Jump_" not in move]
+
     if agentState.frozenTimer > 0:
         return ['FROZEN']
     else:
@@ -477,11 +481,6 @@ class AgentRules:
     return agentState.freezeTimer >= FREEZE_TIME
 
   canFreeze = staticmethod( canFreeze )
-    # If jump is on cooldown, remove jump actions
-    if not AgentRules.canJump(agentState):
-      possibleActions = [move for move in possibleActions if "Jump_" not in move]
-    return possibleActions
-  filterForAllowedActions = staticmethod( filterForAllowedActions )
 
   def canJump( agentState ):
     return agentState.jumpTimer >= JUMP_TIME
@@ -511,6 +510,11 @@ class AgentRules:
     else:
         # Update Configuration
         agentState = state.data.agentStates[agentIndex]
+
+        # Jump Cooldown
+        if "Jump_" in action:
+          agentState.jumpTimer = 0
+
         speed = 1.0
         # if agentState.isPacman: speed = 0.5
         vector = Actions.directionToVector( action, speed )
@@ -533,36 +537,6 @@ class AgentRules:
 
             agentState.numReturned += agentState.numCarrying
             agentState.numCarrying = 0
-    # Update Configuration
-    agentState = state.data.agentStates[agentIndex]
-
-    # Jump Cooldown
-    if "Jump_" in action:
-      agentState.jumpTimer = 0
-
-    speed = 1.0
-    # if agentState.isPacman: speed = 0.5
-    vector = Actions.directionToVector( action, speed )
-    oldConfig = agentState.configuration
-    agentState.configuration = oldConfig.generateSuccessor( vector )
-
-    # Eat
-    next = agentState.configuration.getPosition()
-    nearest = nearestPoint( next )
-
-    if next == nearest:
-      isRed = state.isOnRedTeam(agentIndex)
-      # Change agent type
-      agentState.isPacman = [isRed, state.isRed(agentState.configuration)].count(True) == 1
-      # if he's no longer pacman, he's on his own side, so reset the num carrying timer
-      #agentState.numCarrying *= int(agentState.isPacman)
-      if agentState.numCarrying > 0 and not agentState.isPacman:
-        score = agentState.numCarrying if isRed else -1*agentState.numCarrying
-        state.data.scoreChange += score
-
-        agentState.numReturned += agentState.numCarrying
-        agentState.numCarrying = 0
->>>>>>> origin/master
 
             redCount = 0
             blueCount = 0
