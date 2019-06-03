@@ -59,14 +59,14 @@ SCARED_COLOR = formatColor(1,1,1)
 
 GHOST_VEC_COLORS = list(map(colorToVector, GHOST_COLORS))
 
-CUBE_SHAPE = [
+FROZEN_SHAPE = [
     (-0.85, -0.85),
     (0.85, -0.85),
     (0.85, 0.85),
     (-0.85, 0.85)
 ]
-CUBE_COLOR = formatColor(0.9, 0.9, 1)
-CUBE_SIZE = 0.65
+FROZEN_COLOR = formatColor(0.9, 0.9, 1)
+FROZEN_SIZE = 0.65
 
 
 PACMAN_COLOR = formatColor(255.0/255.0,255.0/255.0,61.0/255)
@@ -265,11 +265,9 @@ class PacmanGraphics:
     """
       Changes an image from a ghost or pacman to ice cube (for capture)
     """
-    print('freeeeze')
     prevState, prevImage = self.agentImages[agentIndex]
     for item in prevImage: remove_from_screen(item)
     image = self.drawIceCube(newState, agentIndex)
-    print(image)
     self.agentImages[agentIndex] = (newState, image )
     refresh()
 
@@ -382,15 +380,15 @@ class PacmanGraphics:
       self.movePacman(self.getPosition(pacman), self.getDirection(pacman), image)
     refresh()
 
-  def drawIceCube(self, cube, cubeIndex):
-    pos = self.getPosition(cube)
-    dir = self.getDirection(cube)
+  def drawIceCube(self, frozen, frozenIndex):
+    pos = self.getPosition(frozen)
+    dir = self.getDirection(frozen)
     (screen_x, screen_y) = (self.to_screen(pos) )
     coords = []
-    for (x, y) in CUBE_SHAPE:
-      coords.append((x*self.gridSize*CUBE_SIZE + screen_x, y*self.gridSize*CUBE_SIZE + screen_y))
+    for (x, y) in FROZEN_SHAPE:
+      coords.append((x*self.gridSize*FROZEN_SIZE + screen_x, y*self.gridSize*FROZEN_SIZE + screen_y))
 
-    colour = CUBE_COLOR
+    colour = FROZEN_COLOR
     body = polygon(coords, colour, filled = 1)
     WHITE = formatColor(1.0, 1.0, 1.0)
     BLACK = formatColor(0.0, 0.0, 0.0)
@@ -405,18 +403,18 @@ class PacmanGraphics:
       dx = 0.2
     if dir == 'West':
       dx = -0.2
-    leftEye = circle((screen_x+self.gridSize*CUBE_SIZE*(-0.3+dx/1.5), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy/1.5)), self.gridSize*CUBE_SIZE*0.2, WHITE, WHITE)
-    rightEye = circle((screen_x+self.gridSize*CUBE_SIZE*(0.3+dx/1.5), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy/1.5)), self.gridSize*CUBE_SIZE*0.2, WHITE, WHITE)
-    leftPupil = circle((screen_x+self.gridSize*CUBE_SIZE*(-0.3+dx), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy)), self.gridSize*CUBE_SIZE*0.08, BLACK, BLACK)
-    rightPupil = circle((screen_x+self.gridSize*CUBE_SIZE*(0.3+dx), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy)), self.gridSize*CUBE_SIZE*0.08, BLACK, BLACK)
-    cubeImageParts = []
-    cubeImageParts.append(body)
-    cubeImageParts.append(leftEye)
-    cubeImageParts.append(rightEye)
-    cubeImageParts.append(leftPupil)
-    cubeImageParts.append(rightPupil)
+    leftEye = circle((screen_x+self.gridSize*FROZEN_SIZE*(-0.3+dx/1.5), screen_y-self.gridSize*FROZEN_SIZE*(0.3-dy/1.5)), self.gridSize*FROZEN_SIZE*0.2, WHITE, WHITE)
+    rightEye = circle((screen_x+self.gridSize*FROZEN_SIZE*(0.3+dx/1.5), screen_y-self.gridSize*FROZEN_SIZE*(0.3-dy/1.5)), self.gridSize*FROZEN_SIZE*0.2, WHITE, WHITE)
+    leftPupil = circle((screen_x+self.gridSize*FROZEN_SIZE*(-0.3+dx), screen_y-self.gridSize*FROZEN_SIZE*(0.3-dy)), self.gridSize*FROZEN_SIZE*0.08, BLACK, BLACK)
+    rightPupil = circle((screen_x+self.gridSize*FROZEN_SIZE*(0.3+dx), screen_y-self.gridSize*FROZEN_SIZE*(0.3-dy)), self.gridSize*FROZEN_SIZE*0.08, BLACK, BLACK)
+    frozenImageParts = []
+    frozenImageParts.append(body)
+    frozenImageParts.append(leftEye)
+    frozenImageParts.append(rightEye)
+    frozenImageParts.append(leftPupil)
+    frozenImageParts.append(rightPupil)
 
-    return cubeImageParts
+    return frozenImageParts
 
 
   def getGhostColor(self, ghost, ghostIndex):
@@ -487,7 +485,7 @@ class PacmanGraphics:
       move_by(ghostImagePart, delta, lift=True)
     refresh()
     if ghost.frozenTimer > 0:
-       color = CUBE_COLOR
+       color = FROZEN_COLOR
     elif ghost.scaredTimer > 0:
       color = SCARED_COLOR
     else:
