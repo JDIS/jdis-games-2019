@@ -59,6 +59,16 @@ SCARED_COLOR = formatColor(1,1,1)
 
 GHOST_VEC_COLORS = list(map(colorToVector, GHOST_COLORS))
 
+CUBE_SHAPE = [
+    (-0.85, -0.85),
+    (0.85, -0.85),
+    (0.85, 0.85),
+    (-0.85, 0.85)
+]
+CUBE_COLOR = formatColor(0.9, 0.9, 1)
+CUBE_SIZE = 0.65
+
+
 PACMAN_COLOR = formatColor(255.0/255.0,255.0/255.0,61.0/255)
 PACMAN_SCALE = 0.5
 #pacman_speed = 0.25
@@ -251,11 +261,34 @@ class PacmanGraphics:
       self.agentImages[agentIndex] = (newState, image )
     refresh()
 
+  def freezeImage(self, agentIndex, newState):
+    """
+      Changes an image from a ghost or pacman to ice cube (for capture)
+    """
+    print('freeeeze')
+    prevState, prevImage = self.agentImages[agentIndex]
+    for item in prevImage: remove_from_screen(item)
+    image = self.drawIceCube(newState, agentIndex)
+    print(image)
+    self.agentImages[agentIndex] = (newState, image )
+    refresh()
+
+  def unfreeze(self, oldState, newState):
+      return oldState.frozenTimer > 0 and newState.frozenTimer <= 0
+
+  def freeze(self, oldState, newState):
+      return oldState.frozenTimer <= 0 and newState.frozenTimer > 0
+
   def update(self, newState):
     agentIndex = newState._agentMoved
     agentState = newState.agentStates[agentIndex]
 
-    if self.agentImages[agentIndex][0].isPacman != agentState.isPacman: self.swapImages(agentIndex, agentState)
+    if self.agentImages[agentIndex][0].isPacman != agentState.isPacman or \
+       self.unfreeze(self.agentImages[agentIndex][0], agentState):
+        self.swapImages(agentIndex, agentState)
+    if self.freeze(self.agentImages[agentIndex][0], agentState):
+        self.freezeImage(agentIndex, agentState)
+
     prevState, prevImage = self.agentImages[agentIndex]
     if agentState.isPacman:
       self.animatePacman(agentState, prevState, prevImage)
@@ -349,6 +382,43 @@ class PacmanGraphics:
       self.movePacman(self.getPosition(pacman), self.getDirection(pacman), image)
     refresh()
 
+  def drawIceCube(self, cube, cubeIndex):
+    pos = self.getPosition(cube)
+    dir = self.getDirection(cube)
+    (screen_x, screen_y) = (self.to_screen(pos) )
+    coords = []
+    for (x, y) in CUBE_SHAPE:
+      coords.append((x*self.gridSize*CUBE_SIZE + screen_x, y*self.gridSize*CUBE_SIZE + screen_y))
+
+    colour = CUBE_COLOR
+    body = polygon(coords, colour, filled = 1)
+    WHITE = formatColor(1.0, 1.0, 1.0)
+    BLACK = formatColor(0.0, 0.0, 0.0)
+
+    dx = 0
+    dy = 0
+    if dir == 'North':
+      dy = -0.2
+    if dir == 'South':
+      dy = 0.2
+    if dir == 'East':
+      dx = 0.2
+    if dir == 'West':
+      dx = -0.2
+    leftEye = circle((screen_x+self.gridSize*CUBE_SIZE*(-0.3+dx/1.5), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy/1.5)), self.gridSize*CUBE_SIZE*0.2, WHITE, WHITE)
+    rightEye = circle((screen_x+self.gridSize*CUBE_SIZE*(0.3+dx/1.5), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy/1.5)), self.gridSize*CUBE_SIZE*0.2, WHITE, WHITE)
+    leftPupil = circle((screen_x+self.gridSize*CUBE_SIZE*(-0.3+dx), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy)), self.gridSize*CUBE_SIZE*0.08, BLACK, BLACK)
+    rightPupil = circle((screen_x+self.gridSize*CUBE_SIZE*(0.3+dx), screen_y-self.gridSize*CUBE_SIZE*(0.3-dy)), self.gridSize*CUBE_SIZE*0.08, BLACK, BLACK)
+    cubeImageParts = []
+    cubeImageParts.append(body)
+    cubeImageParts.append(leftEye)
+    cubeImageParts.append(rightEye)
+    cubeImageParts.append(leftPupil)
+    cubeImageParts.append(rightPupil)
+
+    return cubeImageParts
+
+
   def getGhostColor(self, ghost, ghostIndex):
     if ghost.scaredTimer > 0:
       return SCARED_COLOR
@@ -416,8 +486,9 @@ class PacmanGraphics:
     for ghostImagePart in ghostImageParts:
       move_by(ghostImagePart, delta, lift=True)
     refresh()
-
-    if ghost.scaredTimer > 0:
+    if ghost.frozenTimer > 0:
+       color = CUBE_COLOR
+    elif ghost.scaredTimer > 0:
       color = SCARED_COLOR
     else:
       color = GHOST_COLORS[ghostIndex]
