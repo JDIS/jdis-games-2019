@@ -184,6 +184,39 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
                     continue;
                 }
                 ctx.clearRect(x, y, 1, 1);
+                // is frozen
+                if (px == 'X') {
+                    ctx.fillStyle = '#EEF'
+                    ctx.beginPath();
+
+                    ctx.moveTo(.2 + x, .1 + y);
+                    ctx.lineTo(.8 + x, .1 + y);
+                    ctx.quadraticCurveTo(.9 + x, .1 + y, .9 + x, .2 + y);
+                    ctx.lineTo(.9 + x, .8 + y);
+                    ctx.quadraticCurveTo(.9 + x, .9 + y, .8 + x, .9 + y);
+                    ctx.lineTo(.2 + x, .9 + y);
+                    ctx.quadraticCurveTo(.1 + x, .9 + y, .1 + x, .8 + y);
+                    ctx.lineTo(.1 + x, .2 + y);
+                    ctx.quadraticCurveTo(.1 + x, .1 + y, .2 + x, .1 + y);
+                    ctx.closePath();
+                    ctx.fill();
+                    // Eyes
+                    let dx = 0, dy = 0;
+                    px = px.toUpperCase();
+                    dx -= .2;
+
+                    ctx.fillStyle = '#FFF';
+                    ctx.beginPath();
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(-0.3 + dx / 1.5) , y + GHOST_SIZE*(0.35-dy/1.5), GHOST_SIZE * 0.2, 0, 2 * Math.PI); // left
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(0.3 + dx / 1.5) , y + GHOST_SIZE*(0.35-dy/1.5), GHOST_SIZE * 0.2, 0, 2 * Math.PI); //right
+                    ctx.fill();
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(-0.3+dx), y + GHOST_SIZE * (0.35-dy), GHOST_SIZE*0.08, 0, 2*Math.PI) // left pupil
+                    ctx.arc(x + 0.5 + GHOST_SIZE*(0.3+dx), y + GHOST_SIZE * (0.35-dy), GHOST_SIZE*0.08, 0, 2*Math.PI) // right pupil
+                    ctx.fill();
+
+                }
                 let ghostPxs = ['M', 'W', 'G', 'E'];
                 if (~ghostPxs.indexOf(px.toUpperCase())) { // Ghost
                     // Ghost shape -- see captureGraphicsDisplay.py:drawGhost

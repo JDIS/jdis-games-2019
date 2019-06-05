@@ -133,6 +133,8 @@ class AgentState:
         self.scaredTimer = 0
         self.numCarrying = 0
         self.numReturned = 0
+        self.freezeTimer = 30 # Cooldown to use the freeze ability
+        self.frozenTimer = 0 # Cooldown to be frozen
         self.jumpTimer = 30 # Cooldown to use the jump ability
 
     def __str__( self ):
@@ -144,7 +146,7 @@ class AgentState:
     def __eq__( self, other ):
         if other == None:
             return False
-        return self.configuration == other.configuration and self.scaredTimer == other.scaredTimer and self.jumpTimer == other.jumpTimer
+        return self.configuration == other.configuration and self.scaredTimer == other.scaredTimer and self.frozenTimer == other.frozenTimer and self.freezeTimer == other.freezeTimer and self.jumpTimer == other.jumpTimer
 
     def __hash__(self):
         return hash(hash(self.configuration) + 13 * hash(self.scaredTimer))
@@ -155,7 +157,10 @@ class AgentState:
         state.scaredTimer = self.scaredTimer
         state.numCarrying = self.numCarrying
         state.numReturned = self.numReturned
+        state.freezeTimer = self.freezeTimer
+        state.frozenTimer = self.frozenTimer
         state.jumpTimer = self.jumpTimer
+
         return state
 
     def getPosition(self):
@@ -460,9 +465,11 @@ class GameStateData:
             x,y = [int( i ) for i in nearestPoint( agentState.configuration.pos )]
             agent_dir = agentState.configuration.direction
             if agentState.isPacman:
-                map[x][y] = self._pacStr( agent_dir )
+                map[x][y] = self._pacStr( agent_dir, agentState.frozenTimer )
             else:
-                map[x][y] = self._ghostStr( agent_dir, agentState.scaredTimer )
+                map[x][y] = self._ghostStr( agent_dir ,
+                                            agentState.scaredTimer ,
+                                            agentState.frozenTimer )
 
         for x, y in self.capsules:
             map[x][y] = 'o'
@@ -477,7 +484,9 @@ class GameStateData:
         else:
             return ' '
 
-    def _pacStr( self, dir ):
+    def _pacStr( self, dir , is_frozen ):
+        if is_frozen:
+            return 'X'
         if dir == Directions.NORTH:
             return 'v'
         if dir == Directions.SOUTH:
@@ -486,7 +495,9 @@ class GameStateData:
             return '>'
         return '<'
 
-    def _ghostStr( self, dir, is_scared ):
+    def _ghostStr( self, dir, is_scared, is_frozen ):
+        if is_frozen:
+            return 'X'
         c = 'E'
         if dir == Directions.NORTH:
             c = 'M'

@@ -72,6 +72,8 @@ TOTAL_FOOD = 60
 DUMP_FOOD_ON_DEATH = True # if we have the gameplay element that dumps dots on death
 
 SCARED_TIME = 40
+FREEZE_TIME = 30
+FROZEN_TIME = 10
 JUMP_TIME = 30
 
 def noisyDistance(pos1, pos2):
@@ -459,7 +461,8 @@ class AgentRules:
     agentState = state.getAgentState(agentIndex)
     conf = agentState.configuration
     possibleActions = Actions.getPossibleActions( conf, state.data.layout.walls )
-
+    if AgentRules.canFreeze( agentState ):
+        possibleActions.append('FREEZE')
     return AgentRules.filterForAllowedActions( agentState, possibleActions)
   getLegalActions = staticmethod( getLegalActions )
 
@@ -467,8 +470,17 @@ class AgentRules:
     # If jump is on cooldown, remove jump actions
     if not AgentRules.canJump(agentState):
       possibleActions = [move for move in possibleActions if "Jump_" not in move]
-    return possibleActions
+
+    if agentState.frozenTimer > 0:
+        return ['FROZEN']
+    else:
+        return possibleActions
   filterForAllowedActions = staticmethod( filterForAllowedActions )
+
+  def canFreeze( agentState ):
+    return agentState.freezeTimer >= FREEZE_TIME
+
+  canFreeze = staticmethod( canFreeze )
 
   def canJump( agentState ):
     return agentState.jumpTimer >= JUMP_TIME
@@ -482,51 +494,64 @@ class AgentRules:
     legal = AgentRules.getLegalActions( state, agentIndex )
     if action not in legal:
       raise Exception("Illegal action " + str(action))
-
-    # Update Configuration
-    agentState = state.data.agentStates[agentIndex]
-
-    # Jump Cooldown
-    if "Jump_" in action:
-      agentState.jumpTimer = 0
-
-    speed = 1.0
-    # if agentState.isPacman: speed = 0.5
-    vector = Actions.directionToVector( action, speed )
-    oldConfig = agentState.configuration
-    agentState.configuration = oldConfig.generateSuccessor( vector )
-
-    # Eat
-    next = agentState.configuration.getPosition()
-    nearest = nearestPoint( next )
-
-    if next == nearest:
-      isRed = state.isOnRedTeam(agentIndex)
-      # Change agent type
-      agentState.isPacman = [isRed, state.isRed(agentState.configuration)].count(True) == 1
-      # if he's no longer pacman, he's on his own side, so reset the num carrying timer
-      #agentState.numCarrying *= int(agentState.isPacman)
-      if agentState.numCarrying > 0 and not agentState.isPacman:
-        score = agentState.numCarrying if isRed else -1*agentState.numCarrying
-        state.data.scoreChange += score
-
-        agentState.numReturned += agentState.numCarrying
-        agentState.numCarrying = 0
-
-        redCount = 0
-        blueCount = 0
+    if action == 'FROZEN':
+        return
+    if action == 'FREEZE':
+        agentState = state.data.agentStates[agentIndex]
+        agentState.freezeTimer = 0
+        position = agentState.configuration.getPosition()
         for index in range(state.getNumAgents()):
-          agentState = state.data.agentStates[index]
-          if index in state.getRedTeamIndices():
-            redCount += agentState.numReturned
-          else:
-            blueCount += agentState.numReturned
-        if redCount >= (TOTAL_FOOD/2) - MIN_FOOD or blueCount >= (TOTAL_FOOD/2) - MIN_FOOD:
-          state.data._win = True
+            if index == agentIndex:
+                continue
+            otherAgentState = state.data.agentStates[index]
+            otherPosition = otherAgentState.getPosition()
+            if otherPosition != None and manhattanDistance( otherPosition, position) <= 3:
+                otherAgentState.frozenTimer = FROZEN_TIME
+    else:
+        # Update Configuration
+        agentState = state.data.agentStates[agentIndex]
+
+        # Jump Cooldown
+        if "Jump_" in action:
+          agentState.jumpTimer = 0
+
+        speed = 1.0
+        # if agentState.isPacman: speed = 0.5
+        vector = Actions.directionToVector( action, speed )
+        oldConfig = agentState.configuration
+        agentState.configuration = oldConfig.generateSuccessor( vector )
+
+        # Eat
+        next = agentState.configuration.getPosition()
+        nearest = nearestPoint( next )
+
+        if next == nearest:
+          isRed = state.isOnRedTeam(agentIndex)
+          # Change agent type
+          agentState.isPacman = [isRed, state.isRed(agentState.configuration)].count(True) == 1
+          # if he's no longer pacman, he's on his own side, so reset the num carrying timer
+          #agentState.numCarrying *= int(agentState.isPacman)
+          if agentState.numCarrying > 0 and not agentState.isPacman:
+            score = agentState.numCarrying if isRed else -1*agentState.numCarrying
+            state.data.scoreChange += score
+
+            agentState.numReturned += agentState.numCarrying
+            agentState.numCarrying = 0
+
+            redCount = 0
+            blueCount = 0
+            for index in range(state.getNumAgents()):
+              agentState = state.data.agentStates[index]
+              if index in state.getRedTeamIndices():
+                redCount += agentState.numReturned
+              else:
+                blueCount += agentState.numReturned
+            if redCount >= (TOTAL_FOOD/2) - MIN_FOOD or blueCount >= (TOTAL_FOOD/2) - MIN_FOOD:
+              state.data._win = True
 
 
-    if agentState.isPacman and manhattanDistance( nearest, next ) <= 0.9 :
-      AgentRules.consume( nearest, state, state.isOnRedTeam(agentIndex) )
+        if agentState.isPacman and manhattanDistance( nearest, next ) <= 0.9 :
+          AgentRules.consume( nearest, state, state.isOnRedTeam(agentIndex) )
 
   applyAction = staticmethod( applyAction )
 
@@ -573,17 +598,25 @@ class AgentRules:
   consume = staticmethod( consume )
 
   def decrementTimer(state):
-    timer = state.scaredTimer
-    if timer == 1:
+    scaredTimer = state.scaredTimer
+    frozenTimer = state.frozenTimer
+    if scaredTimer == 1 or frozenTimer == 1:
       state.configuration.pos = nearestPoint( state.configuration.pos )
-    state.scaredTimer = max( 0, timer - 1 )
+    state.scaredTimer = max( 0, scaredTimer - 1 )
+    state.frozenTimer = max( 0, frozenTimer - 1 )
   decrementTimer = staticmethod( decrementTimer )
 
   def incrementTimer(state):
-    timer = state.jumpTimer
-    if timer == 1:
+    freezeTimer = state.freezeTimer
+    if freezeTimer == 1:
       state.configuration.pos = nearestPoint( state.configuration.pos )
-    state.jumpTimer = min( JUMP_TIME, timer + 1 )
+    state.freezeTimer = min( FREEZE_TIME, freezeTimer + 1 )
+
+    jumpTimer = state.jumpTimer
+    if jumpTimer == 1:
+      state.configuration.pos = nearestPoint( state.configuration.pos )
+    state.jumpTimer = min( JUMP_TIME, jumpTimer + 1 )
+
   incrementTimer = staticmethod( incrementTimer )
 
   def dumpFoodFromDeath(state, agentState, agentIndex):
@@ -597,7 +630,7 @@ class AgentRules:
     # ok so agentState is this:
     if (agentState.numCarrying == 0):
       return
-    
+
     # first, score changes!
     # we HACK pack that ugly bug by just determining if its red based on the first position
     # to die...
@@ -711,7 +744,10 @@ class AgentRules:
             agentState.isPacman = False
             agentState.configuration = agentState.start
             agentState.scaredTimer = 0
+            agentState.frozenTimer = 0
+            agentState.freezeTimer = 0
             agentState.jumpTimer = 0
+
           else:
             score = KILL_POINTS
             if state.isOnRedTeam(agentIndex):
@@ -720,7 +756,10 @@ class AgentRules:
             otherAgentState.isPacman = False
             otherAgentState.configuration = otherAgentState.start
             otherAgentState.scaredTimer = 0
+            otherAgentState.frozenTimer = 0
+            otherAgentState.freezeTimer = 0
             otherAgentState.jumpTimer = 0
+
     else: # Agent is a ghost
       for index in otherTeam:
         otherAgentState = state.data.agentStates[index]
@@ -739,7 +778,10 @@ class AgentRules:
             otherAgentState.isPacman = False
             otherAgentState.configuration = otherAgentState.start
             otherAgentState.scaredTimer = 0
+            otherAgentState.frozenTimer = 0
+            otherAgentState.freezeTimer = 0
             otherAgentState.jumpTimer = 0
+
           else:
             score = KILL_POINTS
             if state.isOnRedTeam(agentIndex):
@@ -748,7 +790,10 @@ class AgentRules:
             agentState.isPacman = False
             agentState.configuration = agentState.start
             agentState.scaredTimer = 0
+            agentState.frozenTimer = 0
+            agentState.freezeTimer = 0
             agentState.jumpTimer = 0
+
   checkDeath = staticmethod( checkDeath )
 
   def placeGhost(state, ghostState):
