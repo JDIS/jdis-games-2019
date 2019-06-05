@@ -49,17 +49,12 @@ The keys are
   P2: 'l', ';', ',' and 'p' to move
 """
 import sys, types, time, random, imp
-from pacman.game import GameStateData
-from pacman.game import Game
-from pacman.game import Directions
-from pacman.game import Actions
-from pacman.util import nearestPoint
-from pacman.util import manhattanDistance
-from pacman.game import Grid
-from pacman.game import Configuration
-from pacman.game import Agent
-from pacman.game import reconstituteGrid
+from typing import List, Tuple
+from pacman.game import (GameStateData, AgentState, Game, Directions, 
+    Actions, Grid, Configuration, Agent, reconstituteGrid)
+from pacman.util import nearestPoint, manhattanDistance
 from pacman.keyboardAgents import KeyboardAgent, KeyboardAgent2
+from pacman.layout import Layout
 
 # If you change these, you won't affect the server, so you can't cheat
 KILL_POINTS = 0
@@ -76,7 +71,7 @@ FREEZE_TIME = 30
 FROZEN_TIME = 10
 JUMP_TIME = 30
 
-def noisyDistance(pos1, pos2):
+def noisyDistance(pos1: int, pos2: int) -> int:
   return int(manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
 
 ###################################################
@@ -100,13 +95,13 @@ class GameState:
   # Accessor methods: use these to access state data #
   ####################################################
 
-  def getLegalActions( self, agentIndex=0 ):
+  def getLegalActions( self, agentIndex: int=0 ) -> List[str]:
     """
     Returns the legal actions for the agent specified.
     """
     return AgentRules.getLegalActions( self, agentIndex )
 
-  def generateSuccessor( self, agentIndex, action):
+  def generateSuccessor( self, agentIndex: int, action: str) -> object:
     """
     Returns the successor state (a GameState object) after the specified agent takes the action.
     """
@@ -125,10 +120,10 @@ class GameState:
     state.data.timeleft = self.data.timeleft - 1
     return state
 
-  def getAgentState(self, index):
+  def getAgentState(self, index: int) -> AgentState:
     return self.data.agentStates[index]
 
-  def getAgentPosition(self, index):
+  def getAgentPosition(self, index: int) -> Tuple[int, int]:
     """
     Returns a location tuple if the agent with the given index is observable;
     if the agent is unobservable, returns None.
@@ -139,16 +134,16 @@ class GameState:
       return tuple(int(x) for x in ret)
     return ret
 
-  def getNumAgents( self ):
+  def getNumAgents( self ) -> int:
     return len( self.data.agentStates )
 
-  def getScore( self ):
+  def getScore( self ) -> int:
     """
     Returns a number corresponding to the current score.
     """
     return self.data.score
 
-  def getRedFood(self):
+  def getRedFood(self) -> Grid:
     """
     Returns a matrix of food that corresponds to the food on the red team's side.
     For the matrix m, m[x][y]=true if there is food in (x,y) that belongs to
@@ -156,7 +151,7 @@ class GameState:
     """
     return halfGrid(self.data.food, red = True)
 
-  def getBlueFood(self):
+  def getBlueFood(self) -> Grid:
     """
     Returns a matrix of food that corresponds to the food on the blue team's side.
     For the matrix m, m[x][y]=true if there is food in (x,y) that belongs to
@@ -164,53 +159,53 @@ class GameState:
     """
     return halfGrid(self.data.food, red = False)
 
-  def getRedCapsules(self):
+  def getRedCapsules(self) -> Grid:
     return halfList(self.data.capsules, self.data.food, red = True)
 
-  def getBlueCapsules(self):
+  def getBlueCapsules(self) -> Grid:
     return halfList(self.data.capsules, self.data.food, red = False)
 
-  def getWalls(self):
+  def getWalls(self) -> Grid:
     """
     Just like getFood but for walls
     """
     return self.data.layout.walls
 
-  def hasFood(self, x, y):
+  def hasFood(self, x: int, y: int) -> bool:
     """
     Returns true if the location (x,y) has food, regardless of
     whether it's blue team food or red team food.
     """
     return self.data.food[x][y]
 
-  def hasWall(self, x, y):
+  def hasWall(self, x: int, y: int) -> bool:
     """
     Returns true if (x,y) has a wall, false otherwise.
     """
     return self.data.layout.walls[x][y]
 
-  def isOver( self ):
+  def isOver( self ) -> bool:
     return self.data._win
 
-  def getRedTeamIndices(self):
+  def getRedTeamIndices(self) -> List[int]:
     """
     Returns a list of agent index numbers for the agents on the red team.
     """
     return self.redTeam[:]
 
-  def getBlueTeamIndices(self):
+  def getBlueTeamIndices(self) -> List[int]:
     """
     Returns a list of the agent index numbers for the agents on the blue team.
     """
     return self.blueTeam[:]
 
-  def isOnRedTeam(self, agentIndex):
+  def isOnRedTeam(self, agentIndex: int) -> bool:
     """
     Returns true if the agent with the given agentIndex is on the red team.
     """
     return self.teams[agentIndex]
 
-  def getAgentDistances(self):
+  def getAgentDistances(self) -> List[int]:
     """
     Returns a noisy distance to each agent.
     """
@@ -219,18 +214,18 @@ class GameState:
     else:
       return None
 
-  def getDistanceProb(self, trueDistance, noisyDistance):
+  def getDistanceProb(self, trueDistance: int, noisyDistance: int) -> float:
     "Returns the probability of a noisy distance given the true distance"
     if noisyDistance - trueDistance in SONAR_NOISE_VALUES:
       return 1.0/SONAR_NOISE_RANGE
     else:
       return 0
 
-  def getInitialAgentPosition(self, agentIndex):
+  def getInitialAgentPosition(self, agentIndex: int):
     "Returns the initial position of an agent."
     return self.data.layout.agentPositions[agentIndex][1]
 
-  def getCapsules(self):
+  def getCapsules(self) -> List[Tuple[int, int]]:
     """
     Returns a list of positions (x,y) of the remaining capsules.
     """
@@ -268,7 +263,7 @@ class GameState:
     state.agentDistances = self.agentDistances[:]
     return state
 
-  def makeObservation(self, index):
+  def makeObservation(self, index: int) -> object:
     state = self.deepCopy()
 
     # Adds the sonar signal
@@ -311,7 +306,7 @@ class GameState:
 
     return str(self.data)
 
-  def initialize( self, layout, numAgents):
+  def initialize( self, layout: Layout, numAgents: int) -> None:
     """
     Creates an initial game state from a layout array (see layout.py).
     """
@@ -325,14 +320,14 @@ class GameState:
     global TOTAL_FOOD
     TOTAL_FOOD = layout.totalFood
 
-  def isRed(self, configOrPos):
+  def isRed(self, configOrPos) -> bool:
     width = self.data.layout.width
     if type(configOrPos) == type( (0,0) ):
       return configOrPos[0] < width / 2
     else:
       return configOrPos.pos[0] < width / 2
 
-def halfGrid(grid, red):
+def halfGrid(grid: Grid, red: bool) -> Grid:
   halfway = int(grid.width / 2)
   halfgrid = Grid(grid.width, grid.height, False)
   if red:    xrange = list(range(halfway))
@@ -344,7 +339,7 @@ def halfGrid(grid, red):
 
   return halfgrid
 
-def halfList(l, grid, red):
+def halfList(l, grid: Grid, red: bool) -> List:
   halfway = grid.width / 2
   newList = []
   for x,y in l:
