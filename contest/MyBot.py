@@ -68,7 +68,7 @@ class AgentOne(CaptureAgent):
         Your initialization code goes here, if you need any.
         '''
 
-    def chooseAction(self, gameState: GameState):
+    def chooseAction(self, gameState: GameState) -> str:
         """
         Picks among legal actions randomly.
         """
@@ -81,6 +81,6 @@ class AgentTwo(CaptureAgent):
     def registerInitialState(self, gameState: GameState):
         CaptureAgent.registerInitialState(self, gameState)
     
-    def chooseAction(self, gameState: GameState):
+    def chooseAction(self, gameState: GameState) -> str:
         actions = gameState.getLegalActions(self.index)
         return random.choice(actions)
