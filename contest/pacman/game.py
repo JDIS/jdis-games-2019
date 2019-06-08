@@ -23,6 +23,7 @@
 import time, os
 import traceback
 import sys
+from typing import List, Tuple
 from pacman.util import *
 
 #######################
@@ -36,7 +37,7 @@ class Agent:
 
     def registerInitialState(self, state): # inspects the starting state
     """
-    def __init__(self, index=0):
+    def __init__(self, index: int=0):
         self.index = index
 
     def getAction(self, state):
@@ -84,13 +85,13 @@ class Configuration:
         self.pos = pos
         self.direction = direction
 
-    def getPosition(self):
+    def getPosition(self) -> Tuple[int, int]:
         return (self.pos)
 
-    def getDirection(self):
+    def getDirection(self) -> str:
         return self.direction
 
-    def isInteger(self):
+    def isInteger(self) -> bool:
         x,y = self.pos
         return x == int(x) and y == int(y)
 
@@ -227,7 +228,7 @@ class Grid:
         g.data = self.data
         return g
 
-    def count(self, item =True ):
+    def count(self, item = True ) -> int:
         return sum([x.count(item) for x in self.data])
 
     def asList(self, key = True):
@@ -285,7 +286,7 @@ class Grid:
                 bools.append(False)
         return bools
 
-def reconstituteGrid(bitRep):
+def reconstituteGrid(bitRep: Tuple[int, int]) -> Grid:
     if type(bitRep) is not type((1,2)):
         return bitRep
     width, height = bitRep[:2]
@@ -314,7 +315,7 @@ class Actions:
 
     TOLERANCE = .001
 
-    def reverseDirection(action):
+    def reverseDirection(action: str) -> str:
         if action == Directions.NORTH:
             return Directions.SOUTH
         if action == Directions.SOUTH:
@@ -326,7 +327,7 @@ class Actions:
         return action
     reverseDirection = staticmethod(reverseDirection)
 
-    def vectorToDirection(vector):
+    def vectorToDirection(vector: Tuple[int, int]):
         dx, dy = vector
         if dy > 0:
             return Directions.NORTH
@@ -339,12 +340,12 @@ class Actions:
         return Directions.STOP
     vectorToDirection = staticmethod(vectorToDirection)
 
-    def directionToVector(direction, speed = 1.0):
+    def directionToVector(direction: Directions, speed: float = 1.0) -> Tuple[float, float]:
         dx, dy =  Actions._directions[direction]
         return (dx * speed, dy * speed)
     directionToVector = staticmethod(directionToVector)
 
-    def getPossibleActions(config, walls):
+    def getPossibleActions(config: Configuration, walls: Grid) -> List[str]:
         possible = []
         x, y = config.pos
         x_int, y_int = int(x + 0.5), int(y + 0.5)
@@ -365,7 +366,7 @@ class Actions:
 
     getPossibleActions = staticmethod(getPossibleActions)
 
-    def getLegalNeighbors(position, walls):
+    def getLegalNeighbors(position: Tuple[int,int], walls: Grid) -> List[Tuple[int, int]]:
         x,y = position
         x_int, y_int = int(x + 0.5), int(y + 0.5)
         neighbors = []
@@ -379,7 +380,7 @@ class Actions:
         return neighbors
     getLegalNeighbors = staticmethod(getLegalNeighbors)
 
-    def getSuccessor(position, action):
+    def getSuccessor(position: Tuple[int, int], action: str) -> Tuple[int, int]:
         dx, dy = Actions.directionToVector(action)
         x, y = position
         return (x + dx, y + dy)
@@ -476,7 +477,7 @@ class GameStateData:
 
         return str(map) + ("\nScore: %d\n" % self.score)
 
-    def _foodWallStr( self, hasFood, hasWall ):
+    def _foodWallStr( self, hasFood: bool, hasWall: bool ) -> str:
         if hasFood:
             return '.'
         elif hasWall:
@@ -484,7 +485,7 @@ class GameStateData:
         else:
             return ' '
 
-    def _pacStr( self, dir , is_frozen ):
+    def _pacStr( self, dir: str, is_frozen: bool ) -> str:
         if is_frozen:
             return 'X'
         if dir == Directions.NORTH:
@@ -495,7 +496,7 @@ class GameStateData:
             return '>'
         return '<'
 
-    def _ghostStr( self, dir, is_scared, is_frozen ):
+    def _ghostStr( self, dir: str, is_scared: bool, is_frozen: bool ) -> str:
         if is_frozen:
             return 'X'
         c = 'E'
@@ -508,7 +509,7 @@ class GameStateData:
 
         return c.lower() if is_scared else c
 
-    def initialize( self, layout, numGhostAgents ):
+    def initialize( self, layout: object, numGhostAgents: int ) -> None:
         """
         Creates an initial game state from a layout array (see layout.py).
         """
@@ -555,7 +556,7 @@ class Game:
         import io
         self.agentOutput = [io.StringIO() for agent in agents]
 
-    def getProgress(self):
+    def getProgress(self) -> float:
         if self.gameOver:
             return 1.0
         else:
@@ -571,7 +572,7 @@ class Game:
     OLD_STDOUT = None
     OLD_STDERR = None
 
-    def mute(self, agentIndex):
+    def mute(self, agentIndex: int) -> None:
         if not self.muteAgents: return
         global OLD_STDOUT, OLD_STDERR
         import io
@@ -580,7 +581,7 @@ class Game:
         sys.stdout = self.agentOutput[agentIndex]
         sys.stderr = self.agentOutput[agentIndex]
 
-    def unmute(self):
+    def unmute(self) -> None:
         if not self.muteAgents: return
         global OLD_STDOUT, OLD_STDERR
         # Revert stdout/stderr to originals
