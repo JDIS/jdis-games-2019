@@ -72,6 +72,29 @@ class Directions:
                WEST: EAST,
                STOP: STOP}
 
+class _MetaCosts(type):
+    def __getitem__(_, action):
+            cost = 0
+            if action in Directions.__dict__.values():
+                if action == Directions.STOP:
+                    cost = Costs.STAY_COST
+                elif "Jump" in action:
+                    cost = Costs.JUMP_COST
+                else:
+                    cost = Costs.MOVE_COST
+            elif action == 'FREEZE':
+                cost = Costs.FREEZE_COST
+            elif action == 'FROZEN':
+                cost = Costs.STAY_COST
+            return cost
+
+class Costs(object, metaclass=_MetaCosts):
+    STAY_COST = 0 # Direction.STOP or FROZEN
+    MOVE_COST = .05
+    JUMP_COST = .25
+    FREEZE_COST = 1
+
+
 class Configuration:
     """
     A Configuration holds the (x,y) coordinate of a character, along with its
