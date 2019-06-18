@@ -51,7 +51,7 @@ The keys are
 import sys, types, time, random, imp
 from typing import List, Tuple
 from pacman.game import (GameStateData, AgentState, Game, Directions, 
-    Actions, Grid, Configuration, Agent, reconstituteGrid)
+    Actions, Grid, Configuration, Agent, reconstituteGrid, Costs)
 from pacman.util import nearestPoint, manhattanDistance
 from pacman.keyboardAgents import KeyboardAgent, KeyboardAgent2
 from pacman.layout import Layout
@@ -489,6 +489,9 @@ class AgentRules:
     legal = AgentRules.getLegalActions( state, agentIndex )
     if action not in legal:
       raise Exception("Illegal action " + str(action))
+    cost = Costs[action]
+    state.data.scoreChange += -cost if state.isOnRedTeam(agentIndex) else cost
+
     if action == 'FROZEN':
         return
     if action == 'FREEZE':
