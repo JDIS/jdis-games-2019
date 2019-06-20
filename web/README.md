@@ -32,7 +32,8 @@ Here's a screenshot of the game visualizer (in French):
 
 1. [Install Docker and Docker Compose](https://docs.docker.com/compose/install/).
 2. Copy the `env.example` file to `.env`, and edit this `.env` file to setup all the variables as needed. The `WEB_SECRET` variable can be generated with `openssl rand -hex 48`. These variables will be shared between the Docker containers
-3. Run `docker-compose up`. The first time you do so, the `runner` container will complain that the database doesn't contain certain tables. Don't panic: just wait a few seconds and the automatic database migrations will start, after which everything should run fine.
+3. If you wish to use HTTPS, simply define the `USE_HTTPS` env variable to any truthy value and set the port accordingly (443). You will also need to put your private key and certificate in the `keys`folder (the files must be named `key.pem`and `cert.pem` respectively).
+4. Run `docker-compose up`. The first time you do so, the `runner` container will complain that the database doesn't contain certain tables. Don't panic: just wait a few seconds and the automatic database migrations will start, after which everything should run fine.
 
 ## Notes
 - **Don't run this on the Internet.** All matches are ran in the same container, so players can easy screw up the system if they want to.

@@ -45,5 +45,31 @@ app.use(mount('/public', (ctx, next) =>
     .catch(() => serveStatic('public')(ctx, next))
     .catch(e => console.error(e))));
 
-app.listen(8080);
+
+if (process.env.USE_HTTPS) {
+  const fs = require('fs');
+  const keyFilePath = './keys/key.pem';
+  const certFilePath = './keys/cert.pem';
+
+  if (!fs.existsSync(keyFilePath)) {
+    throw new Error('No key file found. Go read the readme.');
+  }
+
+  if (!fs.existsSync(certFilePath)) {
+    throw new Error('No cert file found. Go read the readme.');
+  }
+
+  const https = require('https');
+  const options = {
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(certFilePath)
+  };
+
+  const httpsServer = https.createServer(options, app.callback())
+    .listen(8080);
+}
+else {
+  app.listen(8080);
+}
+
 console.log('listening on port 8080');
