@@ -3,3 +3,5 @@
 **/.env/
 .cenv
 .env
+contest/score
+web/web/public/games/

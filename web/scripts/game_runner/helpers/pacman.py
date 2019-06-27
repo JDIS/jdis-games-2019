@@ -20,7 +20,7 @@ def play_game(bots):
     pacman_cwd = directories.get_base_directory() + 'pacman/'
 
     players = []
-    command = ["python3", "-m", "pacman.capture", '-q', '--record', '-l', 'RANDOM0']
+    command = ["python3", "-m", "pacman.capture", '-q', '--record', '-l', 'RANDOM']
 
     teamColors = ["-r", "-b"]
     teamNames = ["--red-name", "--blue-name"]
@@ -51,7 +51,7 @@ def parse_game_output(output, players):
     replay_id = ''
     # TODO: Eventually we'd like to keep track of who started
     starting_team = lines[0]
-    score = int(lines[1])
+    score = int(float(lines[1])*100)/100
     replay_id = lines[2]
     if score < 0:
         scores[1] = abs(score)

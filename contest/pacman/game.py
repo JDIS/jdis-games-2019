@@ -483,6 +483,9 @@ class GameStateData:
                 food, walls = self.food, self.layout.walls
                 map[x][y] = self._foodWallStr(food[x][y], walls[x][y])
 
+        for x, y in self.capsules:
+            map[x][y] = 'o'
+
         for agentState in self.agentStates:
             if agentState == None: continue
             if agentState.configuration == None: continue
@@ -495,8 +498,6 @@ class GameStateData:
                                             agentState.scaredTimer ,
                                             agentState.frozenTimer )
 
-        for x, y in self.capsules:
-            map[x][y] = 'o'
 
         return str(map) + ("\nScore: %d\n" % self.score)
 
