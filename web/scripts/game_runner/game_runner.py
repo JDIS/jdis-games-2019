@@ -24,13 +24,20 @@ def main():
             for game in games_ready:
                 teams = [game.team0, game.team1]
                 teams = teams[0:game.max_players]
-                bots = bots_handler.prepare_bots(teams)
-
-                logger.info("Playing game: {}".format(game.id))
-                rank, replay_id = game_backend.play_game(bots)
+                rank = 999
+                replay_id = -1
+                for i in range(3):
+                    try:
+                        bots = bots_handler.prepare_bots(teams)
+                        logger.info("Playing game: {}".format(game.id))
+                        rank, replay_id = game_backend.play_game(bots)
+                        break
+                    except Exception as e:
+                        logger.error("Failed to play game %s", e)
+                
                 database.update_played_game(game, rank, replay_id)
         except Exception as e:
-            logger.error("Failed to fetch or run the games: %s", e)
+            logger.error("Failed to fetch games %s", e)
 
         if i == 60:
             logger.info("Finished processing games")

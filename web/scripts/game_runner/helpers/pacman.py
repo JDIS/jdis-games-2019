@@ -26,8 +26,12 @@ def play_game(bots):
     teamNames = ["--red-name", "--blue-name"]
 
     for i, (botId, data) in enumerate(bots.items()):
+        bot_path = data['path'] + "/MyBot.py"
+        if not os.path.exists(bot_path):
+            logger.error('MyBot.py not found')
+            raise Exception('MyBot.py not found')
         command.append(teamColors[i])
-        command.append(data['path'] + "/MyBot.py")
+        command.append(bot_path)
         command.append(teamNames[i])
         command.append("Team #" + str(botId))
         players.append(botId)

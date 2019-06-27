@@ -12,7 +12,6 @@ def get_all_ready_games():
     s = select([Game]).where(Game.status == Status.ready)
     return conn.execute(s)
 
-# TODO: Fix so it handles n players
 def update_played_game(game, rank, replay):
     conn = Engine.connect()
     s = update(Game).where(Game.id == game.id).values(grade0=rank[0],
