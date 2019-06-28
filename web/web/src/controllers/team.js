@@ -5,6 +5,8 @@ const multer = require('koa-multer');
 
 const Team = require('../models/team.js');
 const { isAuth, isNotOver } = require('../middlewares/auth.js');
+const fs = require("fs");
+const zlib = require('zlib');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
