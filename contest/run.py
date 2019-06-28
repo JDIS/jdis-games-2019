@@ -19,7 +19,7 @@ if __name__ == '__main__':
     redBot = __import__(args.redBot).createTeam
     blueBot = __import__(args.blueBot).createTeam
 
-    display = captureGraphicsDisplay.PacmanGraphics("Red", "Blue", 1, 0, capture=True)
+    display = captureGraphicsDisplay.PacmanGraphics(args.redBot, args.blueBot, 1, 0, capture=True)
     agents = sum([list(el) for el in zip(redBot(0, 2, True), blueBot(1, 3, False))],[])
 
     options = {
@@ -30,11 +30,12 @@ if __name__ == '__main__':
         'numGames': args.numGames,
         'record': True,
         'numTraining': 0,
-        'redTeamName': 'My team',
-        'blueTeamName': 'Bot #1',
+        'redTeamName': args.redBot,
+        'blueTeamName': args.blueBot,
         'muteAgents': False,
         'catchExceptions': False 
     }
+
     games = runGames(**options)
     print('Score: %d' % games[0].state.data.score)
 
