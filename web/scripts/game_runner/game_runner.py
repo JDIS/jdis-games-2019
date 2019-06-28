@@ -35,7 +35,6 @@ def main():
                     except Exception as e:
                         logger.error("Failed to play game %s", e)
                         logger.exception(e)
-                
                 database.update_played_game(game, rank, replay_id)
         except Exception as e:
             logger.error("Failed to fetch games %s", e)

@@ -63,4 +63,5 @@ WHERE ranked=true`,
 
   'selectStats': "SELECT * FROM games WHERE ranked=true AND status='played'",
   'readyGame': "UPDATE games SET status='ready' WHERE id=$1",
+  'getRound': 'SELECT round FROM configs WHERE id=0;',
 }

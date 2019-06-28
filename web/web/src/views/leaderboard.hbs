@@ -48,12 +48,9 @@
            // Score's rule
            if (g.round === round) {
              if (g.grade0 === t.id) {
-               return acc + round * 3;
-             } else if (g.grade1 === t.id) {
-               return acc + round * 2;
-             } else if (g.grade2 === t.id) {
-               return acc + round;
+               acc += 1;
              }
+             return acc;
            }
            return acc;
          }, 0);
@@ -72,7 +69,7 @@
      }
 
      chart.data.datasets = data.teams.map(t => ({
-       label: `${t.name} - ${t.scores.reduce((s,v) => s+v, 0)}`,
+       label: t.name,
        cubicInterpolationMode: 'monotone',
        data: t.scores,
        backgroundColor: ["rgba(255,255,255,0)"],
