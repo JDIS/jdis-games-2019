@@ -41,3 +41,8 @@ router.get('/stats.json', isNotOver, async function (ctx, next) {
   ctx.response.body = await Game.selectStats(ctx.state.db);
   await next();
 });
+
+router.get('/team/:id', async function (ctx, next) {
+  ctx.response.body = await Team.getName(ctx.state.db, ctx.params.id);
+  await next();
+})
