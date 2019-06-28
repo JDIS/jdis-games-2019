@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument("--blueBot", type=str, help='Module name of the blue bot', default="MyBot")
     parser.add_argument("--layout", type=str, help='Name of the layout (in the layouts directory or "random"', default="random")
     parser.add_argument("--numGames", type=int, help='Number of games to be played', default=1)
+    parser.add_argument("--gameLength", type=int, help='Length of a game', default=1000)
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -25,7 +26,7 @@ if __name__ == '__main__':
         'layouts': [lay] * args.numGames,
         'agents': agents,
         'display': display,
-        'length': 1000,
+        'length': args.gameLength,
         'numGames': args.numGames,
         'record': True,
         'numTraining': 0,
