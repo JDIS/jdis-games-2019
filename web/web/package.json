@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jest",
-    "start": "./node_modules/.bin/nodemon index.js"
+    "start": "npm install && ./node_modules/.bin/nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/DrPandemic/halite-backend#readme",
   "dependencies": {
-    "bcrypt": "^1.0.2",
+    "bcrypt": "^3.0.6",
     "handlebars": "^4.0.10",
     "jest": "^20.0.4",
     "koa": "^2.3.0",
@@ -42,6 +42,7 @@
     "nodemon": "^1.11.0",
     "pg-promise": "^6.3.5",
     "xss": "^0.3.3",
+    "yauzl": "^2.10.0",
     "zlib": "^1.0.5"
   },
   "devDependencies": {

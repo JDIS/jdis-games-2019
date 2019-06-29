@@ -89,3 +89,7 @@ module.exports.selectBots = selectBots;
 module.exports.selectTeams = async db => {
   return db.many(query.selectTeams);
 }
+
+module.exports.getName = async (db, id) => {
+  return db.any(query.teamName, [id]);
+}

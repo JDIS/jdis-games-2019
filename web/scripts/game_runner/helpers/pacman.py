@@ -33,7 +33,7 @@ def play_game(bots):
         command.append(teamColors[i])
         command.append(bot_path)
         command.append(teamNames[i])
-        command.append("Team #" + str(botId))
+        command.append(str(botId))
         players.append(botId)
 
     logger.info("Running command: {}".format(str(command)))

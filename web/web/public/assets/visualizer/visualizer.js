@@ -143,13 +143,32 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
     ctx.fillText(centerText, width/2, height+1);
 
     //TODO: Fix ~possible~ probable team name overflow w/ ellipsis or font size
-    ctx.fillStyle = "red";
-    ctx.textAlign = "right";
-    ctx.fillText(redTeamName, (width-centerTextWidth)/2, height+1);
 
-    ctx.fillStyle = "blue";
-    ctx.textAlign = "left";
-    ctx.fillText(blueTeamName, (width+centerTextWidth)/2, height+1);
+    fetch(`/game/team/${redTeamName}`)
+       .then(r => r.json())
+       .catch(e => console.error(e))
+       .then(r => {
+            ctx.fillStyle = "red";
+            ctx.textAlign = "right";
+            if (r && r.length && r[0].name) {
+                ctx.fillText(r[0].name, (width-centerTextWidth)/2, height+1);
+            } else {
+                ctx.fillText("Team #" + redTeamName, (width-centerTextWidth)/2, height+1);
+            }
+       });
+
+       fetch(`/game/team/${blueTeamName}`)
+       .then(r => r.json())
+       .catch(e => console.error(e))
+       .then(r => {
+            ctx.fillStyle = "blue";
+            ctx.textAlign = "left";
+            if (r && r.length && r[0].name) {
+                ctx.fillText(r[0].name, (width+centerTextWidth)/2, height+1);
+            } else {
+                ctx.fillText("Team #" + blueTeamName, (width+centerTextWidth)/2, height+1);
+            }
+       });
 
     let lastScoreWidth = 0;
     let lastTimeWidth = 0;

@@ -14,10 +14,15 @@
 
 <div>
   <h2>Démarrer une partie d'entraînement</h2>
-  <p>Vous pouvez démarrer une nouvelle partie pour tester votre IA, soit contre d'autres participants, soit contre le serveur.</p>
+  <p>
+    Vous pouvez démarrer une nouvelle partie pour tester votre IA, soit contre d'autres participants, soit contre le serveur.
+    {{#if last_upload}}
+      <br /><span>Dernière modification de votre IA: {{last_upload}}</span>
+    {{/if}}
+  </p>
   <form action="/game" method="post">
-    <button name="value" class="button-primary" type="submit" value="players">Démarrer une partie contre les autres participants</button>
-    <button name="value" type="submit" value="bots">Démarrer une partie contre le serveur</button>
+    <button name="value" class="button-primary" type="submit" value="players" {{#unless last_upload}}disabled{{/unless}}>Démarrer une partie contre les autres participants</button>
+    <button name="value" type="submit" value="bots" {{#unless last_upload}}disabled{{/unless}}>Démarrer une partie contre le serveur</button>
   </form>
 </div>
 
