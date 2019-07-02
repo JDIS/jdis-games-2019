@@ -473,11 +473,13 @@ class AgentRules:
   filterForAllowedActions = staticmethod( filterForAllowedActions )
 
   def canFreeze( agentState ):
+    print('f', agentState.freezeTimer)
     return agentState.freezeTimer >= FREEZE_TIME
 
   canFreeze = staticmethod( canFreeze )
 
   def canJump( agentState ):
+    print('j', agentState.jumpTimer)
     return agentState.jumpTimer >= JUMP_TIME
 
   canJump = staticmethod( canJump )
@@ -488,11 +490,11 @@ class AgentRules:
     """
     legal = AgentRules.getLegalActions( state, agentIndex )
     if action not in legal:
-      raise Exception("Illegal action " + str(action))
+      action = 'STOP'
     cost = Costs[action]
     state.data.scoreChange += -cost if state.isOnRedTeam(agentIndex) else cost
 
-    if action == 'FROZEN':
+    if action == 'FROZEN' or action == 'STOP':
         return
     if action == 'FREEZE':
         agentState = state.data.agentStates[agentIndex]
@@ -1097,11 +1099,6 @@ def runGames( agents, display, length, numGames, record, numTraining, redTeamNam
     scores = [g.state.data.score for g in games]
     redWinRate = [s > 0 for s in scores].count(True)/ float(len(scores))
     blueWinRate = [s < 0 for s in scores].count(True)/ float(len(scores))
-    print('Average Score:', sum(scores) / float(len(scores)))
-    print('Scores:       ', ', '.join([str(score) for score in scores]))
-    print('Red Win Rate:  %d/%d (%.2f)' % ([s > 0 for s in scores].count(True), len(scores), redWinRate))
-    print('Blue Win Rate: %d/%d (%.2f)' % ([s < 0 for s in scores].count(True), len(scores), blueWinRate))
-    # print('Record:       ', ', '.join([('Blue', 'Tie', 'Red')[max(0, min(2, 1 + s))] for s in scores]))
   return games
 
 def save_score(game):
