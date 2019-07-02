@@ -33,3 +33,6 @@ router.use('/', home.routes(), home.allowedMethods());
 
 const faq = require('./faq.js');
 router.use('/faq', faq.routes(), faq.allowedMethods());
+
+const rules = require('./rules.js');
+router.use('/rules', rules.routes(), rules.allowedMethods());
