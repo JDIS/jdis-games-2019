@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/DrPandemic/halite-backend#readme",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^1.0.2",
     "handlebars": "^4.0.10",
     "jest": "^20.0.4",
     "koa": "^2.3.0",
