@@ -473,13 +473,11 @@ class AgentRules:
   filterForAllowedActions = staticmethod( filterForAllowedActions )
 
   def canFreeze( agentState ):
-    print('f', agentState.freezeTimer)
     return agentState.freezeTimer >= FREEZE_TIME
 
   canFreeze = staticmethod( canFreeze )
 
   def canJump( agentState ):
-    print('j', agentState.jumpTimer)
     return agentState.jumpTimer >= JUMP_TIME
 
   canJump = staticmethod( canJump )
