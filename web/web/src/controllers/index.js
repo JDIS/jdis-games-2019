@@ -36,3 +36,9 @@ router.use('/faq', faq.routes(), faq.allowedMethods());
 
 const rules = require('./rules.js');
 router.use('/rules', rules.routes(), rules.allowedMethods());
+
+const reference = require('./reference.js');
+router.use('/reference', reference.routes(), reference.allowedMethods());
+
+const improve = require('./improve.js');
+router.use('/improve', improve.routes(), improve.allowedMethods());

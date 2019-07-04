@@ -1,0 +1,303 @@
+{{> start }}
+<div style="max-width:50em">
+  <h1>Guide de référence</h1>
+  
+  Vous êtes encouragés à lire le code du jeu associé aux classes et méthodes décrites si-dessous.
+
+  <h4>GameState</h4>
+  L'objet <span class="code">GameState</span> referme l'état du jeu, incluant le score, les positions des agents, des capsules et des pastilles. Les <span class="code">GameState</span> sont utilisés par la classe <span class="code">Game</span> pour capturer l'état du jeu. Les agents devraient s'en servir pour raisonner sur les actions à prendre.
+
+  <pre class="prettyprint" style="border: 0px solid;">
+  """
+  capture.py
+  """
+
+  class GameState:
+    """
+    A GameState specifies the full game state, including the food, capsules,
+    agent configurations and score changes.
+
+    GameStates are used by the Game object to capture the actual state of the game and
+    can be used by agents to reason about the game.
+
+    Much of the information in a GameState is stored in a GameStateData object.  We
+    strongly suggest that you access that data via the accessor methods below rather
+    than referring to the GameStateData object directly.
+    """
+
+    ####################################################
+    # Accessor methods: use these to access state data #
+    ####################################################
+
+
+    def getLegalActions( self, agentIndex: int=0 ) -> List[str]:
+      """
+      Returns the legal actions for the agent specified.
+      """
+    def generateSuccessor( self, agentIndex: int, action: str) -> object:
+      """
+      Returns the successor state (a GameState object) after the specified agent takes the action.
+      """
+    def getAgentPosition(self, index: int) -> Tuple[int, int]:
+      """
+      Returns a location tuple if the agent with the given index is observable;
+      if the agent is unobservable, returns None.
+      """
+    def getScore( self ) -> int:
+      """
+      Returns a number corresponding to the current score.
+      """
+    def getRedFood(self) -> Grid:
+      """
+      Returns a matrix of food that corresponds to the food on the red team's side.
+      For the matrix m, m[x][y]=true if there is food in (x,y) that belongs to
+      red (meaning red is protecting it, blue is trying to eat it).
+      """
+    def getBlueFood(self) -> Grid:
+      """
+      Returns a matrix of food that corresponds to the food on the blue team's side.
+      For the matrix m, m[x][y]=true if there is food in (x,y) that belongs to
+      blue (meaning blue is protecting it, red is trying to eat it).
+      """
+    def getWalls(self) -> Grid:
+      """
+      Just like getFood but for walls
+      """
+    def hasFood(self, x: int, y: int) -> bool:
+      """
+      Returns true if the location (x,y) has food, regardless of
+      whether it's blue team food or red team food.
+      """
+    def hasWall(self, x: int, y: int) -> bool:
+      """
+      Returns true if (x,y) has a wall, false otherwise.
+      """
+    def getRedTeamIndices(self) -> List[int]:
+      """
+      Returns a list of agent index numbers for the agents on the red team.
+      """
+    def getBlueTeamIndices(self) -> List[int]:
+      """
+      Returns a list of the agent index numbers for the agents on the blue team.
+      """
+    def isOnRedTeam(self, agentIndex: int) -> bool:
+      """
+      Returns true if the agent with the given agentIndex is on the red team.
+      """
+    def getAgentDistances(self) -> List[int]:
+      """
+      Returns a noisy distance to each agent.
+      """
+    def getDistanceProb(self, trueDistance: int, noisyDistance: int) -> float:
+      """
+      Returns the probability of a noisy distance given the true distance
+      """
+    def getInitialAgentPosition(self, agentIndex: int):
+      """
+      Returns the initial position of an agent.
+      """
+    def getCapsules(self) -> List[Tuple[int, int]]:
+      """
+      Returns a list of positions (x,y) of the remaining capsules.
+      """
+  </pre>
+  <hr />
+  <h4>MyBot</h4>
+  Le fichier que vous soumetterez, MyBot, contiens deux classes que vous compléterez pour concevoir vos agents et une méthode retournant des instances de ces classes.
+
+  <pre class=prettyprint" style="border: 0px solid;">
+  """
+  MyBot.py
+  """
+
+  #################
+  # Team creation #
+  #################
+
+  def createTeam(firstIndex, secondIndex, isRed):
+      """
+      This function should return a list of two agents that will form the
+      team, initialized using firstIndex and secondIndex as their agent
+      index numbers. isRed is True if the red team is being created, and
+      will be False if the blue team is being created.
+      """
+
+  ##########
+  # Agents #
+  ##########
+
+  class AgentOne(CaptureAgent):
+      """
+      A Dummy agent to serve as an example of the necessary agent structure.
+      You should look at baselineTeam.py for more details about how to
+      create an agent as this is the bare minimum.
+      """
+
+      def registerInitialState(self, gameState: GameState):
+          """
+          This method handles the initial setup of the
+          agent to populate useful fields (such as what team
+          we're on).
+
+          A distanceCalculator instance caches the maze distances
+          between each pair of positions, so your agents can use:
+          self.distancer.getDistance(p1, p2)
+
+          IMPORTANT: This method may run for at most 5 seconds.
+          """
+
+          '''
+          Make sure you do not delete the following line. If you would like to
+          use Manhattan distances instead of maze distances in order to save
+          on initialization time, please take a look at
+          CaptureAgent.registerInitialState in captureAgents.py.
+          '''
+          CaptureAgent.registerInitialState(self, gameState)
+
+          '''
+          Your initialization code goes here, if you need any.
+          '''
+
+      def chooseAction(self, gameState: GameState) -> str:
+          """
+          Picks among legal actions randomly.
+          """
+
+  class AgentTwo(CaptureAgent):
+      def registerInitialState(self, gameState: GameState):
+          """
+          This method handles the initial setup of the
+          agent to populate useful fields (such as what team
+          we're on).
+
+          A distanceCalculator instance caches the maze distances
+          between each pair of positions, so your agents can use:
+          self.distancer.getDistance(p1, p2)
+
+          IMPORTANT: This method may run for at most 5 seconds.
+          """
+
+          '''
+          Make sure you do not delete the following line. If you would like to
+          use Manhattan distances instead of maze distances in order to save
+          on initialization time, please take a look at
+          CaptureAgent.registerInitialState in captureAgents.py.
+          '''
+          CaptureAgent.registerInitialState(self, gameState)
+
+          '''
+          Your initialization code goes here, if you need any.
+          '''
+
+      def chooseAction(self, gameState: GameState) -> str:
+          """
+          Picks among legal actions randomly.
+          """
+
+  </pre>
+
+  Si vous le désirez, rien ne vous empêche de retourner deux instances de la même classe et n'implémenter qu'un seul agent. De plus, la méthode <span class="code">chooseAction</span> ne devrait plus retourner une action au hasard mais bien la meilleur, évidemment.
+  <hr />
+
+  <h4>CaptureAgent</h4>
+  Les agents des classes <span class="code">AgentOne, AgentTwo</span> héritent de <span class="code">CaptureAgent</span>, qui contient plusieurs méthodes qui pourraient vous être utiles:
+
+  <pre class="prettyprint" style="border: 0px solid;">
+  """
+  captureAgents.py
+  """
+
+  class CaptureAgent(Agent):
+    """
+    A base class for capture agents.  The convenience methods herein handle
+    some of the complications of a two-team game.
+
+    Recommended Usage:  Subclass CaptureAgent and override chooseAction.
+    """
+    #################
+    # Action Choice #
+    #################
+    def chooseAction(self, gameState):
+      """
+      Override this method to make a good agent. It should return a legal action within
+      the time limit (otherwise a random legal action will be chosen for you).
+      """
+
+    #######################
+    # Convenience Methods #
+    #######################
+
+    def getFood(self, gameState):
+      """
+      Returns the food you're meant to eat. This is in the form of a matrix
+      where m[x][y]=true if there is food you can eat (based on your team) in that square.
+      """
+
+    def getFoodYouAreDefending(self, gameState):
+      """
+      Returns the food you're meant to protect (i.e., that your opponent is
+      supposed to eat). This is in the form of a matrix where m[x][y]=true if
+      there is food at (x,y) that your opponent can eat.
+      """
+
+    def getOpponents(self, gameState):
+      """
+      Returns agent indices of your opponents. This is the list of the numbers
+      of the agents (e.g., red might be "1,3,5")
+      """
+
+    def getTeam(self, gameState):
+      """
+      Returns agent indices of your team. This is the list of the numbers
+      of the agents (e.g., red might be the list of 1,3,5)
+      """
+
+    def getScore(self, gameState):
+      """
+      Returns how much you are beating the other team by in the form of a number
+      that is the difference between your score and the opponents score.  This number
+      is negative if you're losing.
+      """
+
+    def getMazeDistance(self, pos1, pos2):
+      """
+      Returns the distance between two points; These are calculated using the provided
+      distancer object.
+
+      If distancer.getMazeDistances() has been called, then maze distances are available.
+      Otherwise, this just returns Manhattan distance.
+      """
+
+    def getPreviousObservation(self):
+      """
+      Returns the GameState object corresponding to the last state this agent saw
+      (the observed state of the game last time this agent moved - this may not include
+      all of your opponent's agent locations exactly).
+      """
+
+    def getCurrentObservation(self):
+      """
+      Returns the GameState object corresponding this agent's current observation
+      (the observed state of the game - this may not include
+      all of your opponent's agent locations exactly).
+      """
+
+    def displayDistributionsOverPositions(self, distributions):
+      """
+      Overlays a distribution over positions onto the pacman board that represents
+      an agent's beliefs about the positions of each agent.
+
+      The arg distributions is a tuple or list of util.Counter objects, where the i'th
+      Counter has keys that are board positions (x,y) and values that encode the probability
+      that agent i is at (x,y).
+
+      If some elements are None, then they will be ignored.  If a Counter is passed to this
+      function, it will be displayed. This is helpful for figuring out if your agent is doing
+      inference correctly, and does not affect gameplay.
+      """
+  </pre>
+
+  Vous noterez que la dernière méthode mentionne l'inférence. Voyons voir comment vous pourriez intégrer l'inférence à votre agent dans le <a href="/improve">guide d'amélioration!</a>
+
+</div>
+{{> end }}
