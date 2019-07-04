@@ -488,11 +488,11 @@ class AgentRules:
     """
     legal = AgentRules.getLegalActions( state, agentIndex )
     if action not in legal:
-      raise Exception("Illegal action " + str(action))
+      action = 'STOP'
     cost = Costs[action]
     state.data.scoreChange += -cost if state.isOnRedTeam(agentIndex) else cost
 
-    if action == 'FROZEN':
+    if action == 'FROZEN' or action == 'STOP':
         return
     if action == 'FREEZE':
         agentState = state.data.agentStates[agentIndex]
@@ -1024,7 +1024,24 @@ def replayGame( layout, agents, actions, display, length, redTeamName, blueTeamN
 
     display.finish()
 
-def runGames( layouts, agents, display, length, numGames, record, numTraining, redTeamName, blueTeamName, muteAgents=False, catchExceptions=False ):
+def runGames( agents, display, length, numGames, record, numTraining, redTeamName, blueTeamName, muteAgents=False, catchExceptions=False, seed=None, layout='RANDOM' ):
+  if seed is not None:
+    random.seed(seed)
+  # Choose a layout
+  import pacman.layout as lay
+  layouts = []
+  for i in range(numGames):
+    if layout == 'RANDOM':
+      l = lay.Layout(randomLayout().split('\n'))
+    elif layout.startswith('RANDOM'):
+      l = lay.Layout(randomLayout(int(layout[6:])).split('\n'))
+    elif layout.lower().find('capture') == -1:
+      raise Exception( 'You must use a capture layout with capture.py')
+    else:
+      l = lay.getLayout( layout )
+    if l == None: raise Exception("The layout " + layout + " cannot be found")
+
+    layouts.append(l)
 
   rules = CaptureRules()
   games = []
@@ -1080,11 +1097,6 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
     scores = [g.state.data.score for g in games]
     redWinRate = [s > 0 for s in scores].count(True)/ float(len(scores))
     blueWinRate = [s < 0 for s in scores].count(True)/ float(len(scores))
-    # print('Average Score:', sum(scores) / float(len(scores)))
-    # print('Scores:       ', ', '.join([str(score) for score in scores]))
-    # print('Red Win Rate:  %d/%d (%.2f)' % ([s > 0 for s in scores].count(True), len(scores), redWinRate))
-    # print('Blue Win Rate: %d/%d (%.2f)' % ([s < 0 for s in scores].count(True), len(scores), blueWinRate))
-    # print('Record:       ', ', '.join([('Blue', 'Tie', 'Red')[max(0, min(2, 1 + s))] for s in scores]))
   return games
 
 def save_score(game):
