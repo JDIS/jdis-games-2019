@@ -3,7 +3,7 @@
 <div style="max-width:50em">
   <h1>Règles</h1>
   <p>
-  Vous aurez à implémenter un agent qui joue à une forme de pacman adversarielle. Vos agents manger les pastilles de l'autre côté de la carte tout en protégant les votres.
+  Vous aurez à implémenter un agent qui joue à pacman sous une forme <i>capture the flag</i>. Vos agents tenterons de manger les pastilles de l'autre côté de la carte tout en protégant les votres. Chaque agent bouge tour à tour sur la carte, jusqu'à ce que le temps soit écoulé.
   </p>
   <h4>Carte</h4>
   <img src="/public/assets/images/map.png"/>
@@ -30,19 +30,19 @@
   <h4>Abiletées</h4>
   <img src="/public/assets/images/frozen.png" style="max-width:40px; max-height: 40px;"/>
   <p>
-  Vos agents possèdent deux abiletées qui pourront les rendre plus aggressifs ou leur permettre de se sortir de situations dangereuses:
+  Vos agents possèdent deux habiletées qui pourront les rendre plus aggressifs ou leur permettre de se sortir de situations dangereuses:
   <ul>
-    <li>Saut: Les agents peuvent sauter de deux cases dans une directions, si cette direction est valide. Ceci leur permet d'avancer plus rapidement, ou de sauter par dessus un mur. Cette abileté a un <i>cooldown</i> de 30 tours.
+    <li>Saut: Les agents peuvent sauter de deux cases dans une directions, si cette direction est valide. Ceci leur permet d'avancer plus rapidement, ou de sauter par dessus un mur. Cette habileté a un <i>cooldown</i> de 30 tours.
     </li>
-    <li>Gel: Les agent peuvent geler tout ce qui se trouve autour d'eux, <em>incluant leur coéquipier</em>, dans un rayon de 3 cases. Cette abileté a un <i>cooldown</i> de 30 tours, et les agents sont gelés pour 10 tours, pendant lesquels ils ne peuvent rien faire.
+    <li>Gel: Les agent peuvent geler tout ce qui se trouve autour d'eux, <em>incluant leur coéquipier</em>, dans un rayon de 3 cases. Cette habileté a un <i>cooldown</i> de 30 tours, et les agents sont gelés pour 10 tours, pendant lesquels ils ne peuvent rien faire.
     </li>
   </ul>
   </p>
   <h4>Observations</h4>
   <p>
-     Un "fog" of war vous empêche d'observer un agent ennemi si vous ou votre coéquipier est à plus de 5 cases (distance manhattan) de votre agent ou votre coéquipier. De plus, les agents ne possèdent que des capteurs bruités, retournant une valeur de ± [0,6]. 
+     Un "fog of war" vous empêche d'observer un agent ennemi si vous ou votre coéquipier est à plus de 5 cases (distance manhattan) de votre agent ou votre coéquipier. De plus, les agents ne possèdent que des capteurs bruités, retournant une distance de ± [0,6] la distance réelle. 
   </p>
   
-  <p>Si vous vous sentez confiant de vos abiletés à concevoir le meilleur agent, vous pouvez passer au <a href="/reference">guide de référence</a>!
+  <p>Si vous vous sentez confiant en vos habiletés à concevoir le meilleur agent, vous pouvez passer au <a href="/reference">guide de référence</a>!
 </div>
 {{> end }}
