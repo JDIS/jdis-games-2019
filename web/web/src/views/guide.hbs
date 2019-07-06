@@ -22,32 +22,34 @@
       <th>Fichier/Dossier</th>
       <th>Description</th>
     <tr>
-      <td>
-        MyBot
-      </td>
-      <td>Le dossier que vous modifierez pour développer votre IA. Contient initialement le code d'une IA aléatoire (<em>RandomBot</em>).</td>
-    </tr>
-    <tr>
-      <td>runGame.bat</td>
-      <td>Script qui permet de lancer une partie sur Windows.</td>
-    </tr>
-    <tr>
-      <td>runGame.sh</td>
-      <td>Script qui permet de lancer une partie sur Linux.</td>
-    </tr>
-    <tr>
-      <td>runGameMac.sh</td>
-      <td>Script qui permet de lancer une partie sur macOS.</td>
+      <td>layouts</td>
+      <td>Ce dossier contient les différentes cartes que vous pouvez utiliser pour tester votre bot.</td>
     </tr>
     <tr>
       <td>pacman</td>
       <td>Dossier qui contient l’environnement de jeu pour Windows/Linux/macOS. NE MODIFIEZ PAS CE DOSSIER</td>
     </tr>
+    <tr>
+      <td>replays</td>
+      <td>Ce dossier contient les replays de toutes les parties que vous avez jouées. Les fichiers sans extension seront utilisés pour visualiser un replay localement, tandis que les fichiers .klvr devront être téléversés sur la plateforme pour visionner un replay.</td>
+    </tr>
+    <tr>
+      <td>MyBot.py</td>
+      <td>Le dossier que vous modifierez pour développer votre IA. Contient initialement le code d'une IA aléatoire (<em>RandomBot</em>).</td>
+    </tr>
+    <tr>
+      <td>replay.py</td>
+      <td>Ce fichier peut être utilisé pour visionner une partie que vous avez jouée. Vous devez donner en argument au script le nom du fichier de replay que vous désirez visionner.</td>
+    </tr>
+    <tr>
+      <td>run.py</td>
+      <td>Ce fichier peut être utilisé pour jouer une partie localement. Pour plus d'infos sur l'utilisation de ce fichier, vous pouvez l'exéctuer avec l'argument <code>--help</code>.</td>
+    </tr>
   </table>
 
   <h2>2. Tester votre IA localement</h2>
   <p>
-    Pour simuler une partie localement, exécutez tout simplement le fichier <code>./runGame.sh</code> 
+    Pour simuler une partie localement, exécutez tout simplement le fichier <code>./run.py</code> 
     pour exécuter une partie entre votre IA (<em>MyBot</em>) et <em>RandomBot</em> sur une carte de dimension 30x30.
     Une fois la partie simulée, un fichier avec une extension <code>.klvr</code> sera généré : ce fichier contient les détails de la partie que vous venez de simuler. Vous pouvez ensuite utiliser ce fichier pour voir la partie graphiquement à l'aide du <a href="/visualizer">visualiseur</a>.
   </p>
@@ -61,7 +63,7 @@
 
   <h2>4. Téléverser votre IA</h2>
   <p>
-    Via votre <a target="_blank" href="/dashboard">Dashboard</a>, vous pouvez téléverser une archive votre IA. Le fichier téléversé doit avoir une extension <code>.zip</code> et contenir <b>seulement</b> le dossier MyBot fourni dans le <em>starter package</em>.
+    Via votre <a target="_blank" href="/dashboard">Dashboard</a>, vous pouvez téléverser une archive votre IA. Le fichier téléversé doit avoir une extension <code>.zip</code> et contenir au minumum le fichier MyBot fourni dans le <em>starter package</em>. Si désiré, il est possible de créer de nouveaux fichiers et d'y référer dans MyBot.py. Il suffira alors de les inclure dans le <code>.zip</code> avant de le téléverser.
   </p>
 
   <h2>5. Gagner le défi</h2>

@@ -3,7 +3,7 @@
 <div style="max-width:50em">
   <h1>Règles</h1>
   <p>
-  Vous aurez à implémenter un agent qui joue à pacman sous une forme <i>capture the flag</i>. Vos agents tenterons de manger les pastilles de l'autre côté de la carte tout en protégant les votres. Chaque agent bouge tour à tour sur la carte, jusqu'à ce que le temps soit écoulé.
+  Vous aurez à implémenter un agent qui joue à pacman sous une forme <i>capture the flag</i>. Vos agents tenterons de manger les pastilles de l'autre côté de la carte tout en protégant les votres. Chaque agent bouge tour à tour sur la carte, jusqu'à ce que le temps soit écoulé. Veuillez noter que dans le reste du guide, un <i>tick</i> référera à l'action d'un seul bot (un tour de jeu complet compte donc 4 ticks).
   </p>
   <h4>Carte</h4>
   <img src="/public/assets/images/map.png"/>
@@ -22,26 +22,29 @@
   <h4>Les <em>Power Capsules</em></h4>
   <img src="/public/assets/images/power.png" style="max-width:20px; max-height: 20px;"/>
   <p>
-  Des <em>power capsules</em>, d'apparence de pastille plus grande, sont distribuées sur la carte. Celles-ci apeurent les fantômes ennemis pendant 40 tours, les rendant vulnérables à être mangés par un pacman ennemi. Si un fantômne apeuré est mangé, il réapparaît dans sa zone et n'est plus apeuré.
+  Des <em>power capsules</em>, d'apparence de pastille plus grande, sont distribuées sur la carte. Celles-ci apeurent les fantômes ennemis pendant 40 ticks, les rendant vulnérables à être mangés par un pacman ennemi. Si un fantômne apeuré est mangé, il réapparaît dans sa zone et n'est plus apeuré.
   </p>
   <h4>Gagner une partie</h4>
   <p>
-  Une partie se termine s'il ne reste que deux pastilles à une équipe ou lorsque le temps est écoulé. Si le score est de zéro, la partie est nulle.
+  Une partie se termine s'il ne reste que deux pastilles à une équipe ou lorsque le temps (1000 ticks) est écoulé. Si le score est de zéro, la partie est nulle.
   </p>
   <h4>Habiletés</h4>
   <img src="/public/assets/images/frozen.png" style="max-width:40px; max-height: 40px;"/>
   <p>
-  Vos agents possèdent deux habiletés qui pourront les rendre plus aggressifs ou leur permettre de se sortir de situations dangereuses:
+  Vos agents possèdent deux habiletés qui, en échange de quelques points, pourront les rendre plus aggressifs ou leur permettre de se sortir de situations dangereuses:
   <ul>
-    <li>Saut: Les agents peuvent sauter de deux cases dans une direction, si cette direction est valide. Ceci leur permet d'avancer plus rapidement, ou de sauter par dessus un mur. Cette habileté a un <i>cooldown</i> de 30 tours.
+    <li>Saut: Les agents peuvent sauter de deux cases dans une direction, si cette direction est valide. Ceci leur permet d'avancer plus rapidement, ou de sauter par dessus un mur. Cette habileté a un <i>cooldown</i> de 30 ticks. Cette habileté coûte 0.25 point par utilisation.
     </li>
-    <li>Gel: Les agent peuvent geler tout ce qui se trouve autour d'eux, <em>incluant leur coéquipier</em>, dans un rayon de 3 cases. Cette habileté a un <i>cooldown</i> de 30 tours, et les agents sont gelés pour 10 tours, pendant lesquels ils ne peuvent rien faire.
+    <li>Gel: Les agent peuvent geler tout ce qui se trouve autour d'eux, <em>incluant leur coéquipier</em>, dans un rayon de 3 cases. Cette habileté a un <i>cooldown</i> de 30 ticks, et les agents sont gelés pour 10 ticks, pendant lesquels ils ne peuvent rien faire. Cette habileté coûte 1 point par utilisation.
     </li>
   </ul>
   </p>
   <h4>Observations</h4>
   <p>
      Un "fog of war" vous empêche d'observer un agent ennemi si vous ou votre coéquipier est à plus de 5 cases (<a href="https://fr.wikipedia.org/wiki/Distance_de_Manhattan">distance de  Manhattan</a>) de votre agent ou votre coéquipier. De plus, les agents ne possèdent que des capteurs bruités, retournant une distance de ± [0,6] la distance réelle. 
+  </p>
+  <p>
+    Votre bot aura un maximum de 1 seconde pour calculer chacune de ses actions. S'il n'a pas terminé après 1 seconde il recevra un avertissement. Après 3 avertissements, vous perdrez automatiquement la partie.
   </p>
   
   <p>Si vous vous sentez confiant en vos habiletés à concevoir le meilleur agent, vous pouvez passer au <a href="/reference">guide de référence</a>!
