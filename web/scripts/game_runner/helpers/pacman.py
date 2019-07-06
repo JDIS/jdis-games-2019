@@ -20,7 +20,7 @@ def play_game(bots):
     pacman_cwd = directories.get_base_directory() + 'pacman/'
 
     players = []
-    command = ["python3", "-m", "pacman.capture", '-q', '--record', '-l', 'RANDOM']
+    command = ["python3", "-m", "pacman.capture", '-Q', '--record', '-l', 'RANDOM']
 
     teamColors = ["-r", "-b"]
     teamNames = ["--red-name", "--blue-name"]
