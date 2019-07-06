@@ -133,3 +133,7 @@ button:disabled {
   background-color: #7CD9F8;
   border-color: #7CD9F8; 
 }
+
+.code {
+  font-family: monospace;
+}

@@ -1,0 +1,49 @@
+{{> start }}
+
+<div style="max-width:50em">
+  <h1>Règles</h1>
+  <p>
+  Vous aurez à implémenter un agent qui joue à pacman sous une forme <i>capture the flag</i>. Vos agents tenterons de manger les pastilles de l'autre côté de la carte tout en protégant les votres. Chaque agent bouge tour à tour sur la carte, jusqu'à ce que le temps soit écoulé.
+  </p>
+  <h4>Carte</h4>
+  <img src="/public/assets/images/map.png"/>
+  <p>
+  Les cartes sont divisées en deux zones: Bleu et Rouge. Les agents Bleus doivent défendre les pastilles dans la zone bleus tout en essayant de manger les pastilles dans la zone rouge, et vice-versa. Lorsqu'un agent est dans sa zone, il est un fantôme, pouvant manger les pacmans ennemis, qui réapparaîtrons dans leur zone. Lorsqu'un agent est dans la zone adverse, il est un pacman, pouvant manger des pastilles.
+  </p>
+  <h4>Marquer des points</h4>
+  <p>
+  Alors qu'un pacman mange des pastilles, il stock celles-ci et elles sont enlevées de la carte. Lorsqu'un pacman traverse vers sa zone, un point par pastille est accordé à l'équipe. Si un pacman est mangé alors qu'il transportait des pastilles, il explose en un nuage de pastilles qui sont redistribuées sur la carte.
+  </p>
+  <p>
+  L'équipe Rouge marque des points positifs et l'équipe Bleu marque des points négatifs.
+  </p>
+  <p><b>Attention ! </b>Chaque action a un coût. Vous devrez donc agir stratégiquement et choisir l'action optimale à chaque instant pour ne pas gaspiller vos points.</p>
+
+  <h4>Les <em>Power Capsules</em></h4>
+  <img src="/public/assets/images/power.png" style="max-width:20px; max-height: 20px;"/>
+  <p>
+  Des <em>power capsules</em>, d'apparence de pastille plus grande, sont distribuées sur la carte. Celles-ci apeurent les fantômes ennemis pendant 40 tours, les rendant vulnérables à être mangés par un pacman ennemi. Si un fantômne apeuré est mangé, il réapparaît dans sa zone et n'est plus apeuré.
+  </p>
+  <h4>Gagner une partie</h4>
+  <p>
+  Une partie se termine s'il ne reste que deux pastilles à une équipe ou lorsque le temps est écoulé. Si le score est de zéro, la partie est nulle.
+  </p>
+  <h4>Habiletés</h4>
+  <img src="/public/assets/images/frozen.png" style="max-width:40px; max-height: 40px;"/>
+  <p>
+  Vos agents possèdent deux habiletés qui pourront les rendre plus aggressifs ou leur permettre de se sortir de situations dangereuses:
+  <ul>
+    <li>Saut: Les agents peuvent sauter de deux cases dans une direction, si cette direction est valide. Ceci leur permet d'avancer plus rapidement, ou de sauter par dessus un mur. Cette habileté a un <i>cooldown</i> de 30 tours.
+    </li>
+    <li>Gel: Les agent peuvent geler tout ce qui se trouve autour d'eux, <em>incluant leur coéquipier</em>, dans un rayon de 3 cases. Cette habileté a un <i>cooldown</i> de 30 tours, et les agents sont gelés pour 10 tours, pendant lesquels ils ne peuvent rien faire.
+    </li>
+  </ul>
+  </p>
+  <h4>Observations</h4>
+  <p>
+     Un "fog of war" vous empêche d'observer un agent ennemi si vous ou votre coéquipier est à plus de 5 cases (<a href="https://fr.wikipedia.org/wiki/Distance_de_Manhattan">distance de  Manhattan</a>) de votre agent ou votre coéquipier. De plus, les agents ne possèdent que des capteurs bruités, retournant une distance de ± [0,6] la distance réelle. 
+  </p>
+  
+  <p>Si vous vous sentez confiant en vos habiletés à concevoir le meilleur agent, vous pouvez passer au <a href="/reference">guide de référence</a>!
+</div>
+{{> end }}
