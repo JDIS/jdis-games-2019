@@ -101,6 +101,22 @@ function drawWalls(game, ctx, width, height) {
     ctx.closePath();
 }
 
+function write(ctx, text, x, y) {
+    // Text scaling doesn't work nicely in firefox 67
+    // So we unscale - write text - scale as a wrapper
+    ctx.scale(1/GRID_SIZE, 1/GRID_SIZE);
+    ctx.font = GRID_SIZE+"px Arial";
+
+    ctx.fillText(text, GRID_SIZE*x, GRID_SIZE*y);
+
+    const text_width = ctx.measureText(text).width / GRID_SIZE;
+
+    ctx.font = "1px Arial";
+    ctx.scale(GRID_SIZE, GRID_SIZE);
+
+    return text_width;
+}
+
 function showGame({history, redTeamName, blueTeamName, scores}) {
     const canvas = document.getElementById("pacman-game-visualizer");
     const ctx = canvas.getContext("2d");
@@ -118,7 +134,6 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
     // Scale up to GRID_SIZE
     ctx.scale(GRID_SIZE, GRID_SIZE);
     ctx.webkitImageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
 
     // Display walls (constant)
@@ -133,14 +148,11 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
     ctx.globalCompositeOperation = 'source-over';
 
     // Setup text
-    ctx.font = "1px Arial";
-
     // Add team names
     const centerText = " vs ";
-    const centerTextWidth = ctx.measureText(centerText).width;
     ctx.fillStyle = "#FFF";
     ctx.textAlign = "center";
-    ctx.fillText(centerText, width/2, height+1);
+    const centerTextWidth = write(ctx, centerText, width/2, height+1);
 
     //TODO: Fix ~possible~ probable team name overflow w/ ellipsis or font size
 
@@ -151,9 +163,9 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
             ctx.fillStyle = "red";
             ctx.textAlign = "right";
             if (r && r.length && r[0].name) {
-                ctx.fillText(r[0].name, (width-centerTextWidth)/2, height+1);
+                write(ctx, r[0].name, (width-centerTextWidth)/2, height+1);
             } else {
-                ctx.fillText("Team #" + redTeamName, (width-centerTextWidth)/2, height+1);
+                write(ctx, "Team #" + redTeamName, (width-centerTextWidth)/2, height+1);
             }
        });
 
@@ -164,9 +176,9 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
             ctx.fillStyle = "blue";
             ctx.textAlign = "left";
             if (r && r.length && r[0].name) {
-                ctx.fillText(r[0].name, (width+centerTextWidth)/2, height+1);
+                write(ctx, r[0].name, (width+centerTextWidth)/2, height+1);
             } else {
-                ctx.fillText("Team #" + blueTeamName, (width+centerTextWidth)/2, height+1);
+                write(ctx, "Team #" + blueTeamName, (width+centerTextWidth)/2, height+1);
             }
        });
 
@@ -179,14 +191,14 @@ function showGame({history, redTeamName, blueTeamName, scores}) {
         lastScoreWidth = ctx.measureText(score).width;
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = "left";
-        ctx.fillText(score, 0, height + 1);
+        write(ctx, score, 0, height + 1);
         
         // Print time
         let time = `Time: ${history.length - index - 1}`;
         ctx.clearRect(width-lastTimeWidth, height, lastTimeWidth, 1);
         lastTimeWidth = ctx.measureText(time).width;
         ctx.textAlign = "right";
-        ctx.fillText(time, width, height+1);
+        write(ctx, time, width, height+1);
 
         // Bar graph of time
         ctx.clearRect(0, height+1, width, (timerSize + timerOffset) / GRID_SIZE);
