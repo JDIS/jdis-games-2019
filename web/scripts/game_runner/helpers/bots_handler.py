@@ -32,7 +32,6 @@ def cleanup():
 
 def _unzip_bot(bot):
     bot_path = tmp_directory + str(bot) + str(uuid.uuid4())
-    print(bot_path)
 
     try:
         zip_bot = ZipFile(bots_directory + str(bot) + '.zip', 'r')
