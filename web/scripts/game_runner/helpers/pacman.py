@@ -3,7 +3,7 @@ import logging
 import helpers.directories as directories
 import shutil
 import numpy as np
-from subprocess import check_output
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ def safe_move(src, dest):
         os.makedirs(os.path.dirname(dest))
         shutil.move(src, dest)
 
-def play_game(bots):
+async def play_game(bots):
     games_directory = directories.get_games_directory()
     tmp_directory = directories.get_base_directory() + 'tmp/'
     pacman_cwd = directories.get_base_directory() + 'pacman/'
@@ -37,8 +37,17 @@ def play_game(bots):
         players.append(botId)
 
     logger.info("Running command: {}".format(str(command)))
-    output = check_output(command, cwd=pacman_cwd)
-    rank, replay_id = parse_game_output(output, players)
+
+    proc = await asyncio.create_subprocess_exec(
+        *command,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd=pacman_cwd)
+    stdout, stderr = await proc.communicate()
+    if proc.returncode != 0:
+        raise Exception("Subprocess ran with errors: " + stderr.decode())
+    else:
+        rank, replay_id = parse_game_output(stdout, players)
 
     safe_move(f"{pacman_cwd}{replay_id}", f"{games_directory}{replay_id}")
 
