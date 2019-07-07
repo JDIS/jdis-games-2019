@@ -33,14 +33,22 @@ def main():
         i = i + 1
         if i == 60:
             logger.info("Polling new games")
+
+        games_ready = False
         try:
             games_ready = database.get_all_ready_games()
+        except Exception as e:
+            logger.error("Failed to fetch games")
+            logger.exception(e)
+
+        try:
             if games_ready:
                 loop = asyncio.get_event_loop()
                 tasks = [asyncio.ensure_future(run_game(game)) for game in games_ready]
-                loop.run_until_complete(asyncio.gather(*tasks))            
+                loop.run_until_complete(asyncio.gather(*tasks))
+                bots_handler.cleanup()
         except Exception as e:
-            logger.error("Failed to fetch games %s", e)
+            logger.error("Failed to spawn games")
             logger.exception(e)
 
         if i == 60:

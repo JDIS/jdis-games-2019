@@ -5,6 +5,7 @@ import logging
 from zipfile import ZipFile
 from subprocess import check_output
 from helpers.language import Language
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +16,8 @@ bots_directory = directories.get_base_directory() + 'bots/'
 def prepare_bots(bots):
     bots_extracted = {}
 
-    # Delete tmp before copying bots
-    if os.path.exists(tmp_directory):
-        shutil.rmtree(tmp_directory)
-    os.makedirs(tmp_directory)
+    if not os.path.exists(tmp_directory):
+        os.makedirs(tmp_directory)
 
     for bot in bots:
         bot_path = _unzip_bot(bot)
@@ -27,9 +26,13 @@ def prepare_bots(bots):
 
     return bots_extracted
 
+def cleanup():
+    if os.path.exists(tmp_directory):
+        shutil.rmtree(tmp_directory)
 
 def _unzip_bot(bot):
-    bot_path = tmp_directory + str(bot)
+    bot_path = tmp_directory + str(bot) + str(uuid.uuid4())
+    print(bot_path)
 
     try:
         zip_bot = ZipFile(bots_directory + str(bot) + '.zip', 'r')
