@@ -56,18 +56,9 @@ async def play_game(bots):
 
 def parse_game_output(output, players):
     lines = output.decode("utf-8").split('\n')
-    scores = [0]*len(players)
-    replay_id = ''
-    # TODO: Eventually we'd like to keep track of who started
     starting_team = lines[0]
     score = int(float(lines[1])*100)/100
     replay_id = lines[2]
-    if score < 0:
-        scores[1] = abs(score)
-    elif score > 0:
-        scores[0] = abs(score)
-    indices = np.argsort(scores).tolist()
-    players = np.array(players)
-    ranks = players[indices]
+    ranks = players if score > 0 else players[::-1]
 
-    return ranks.tolist(), replay_id + '.klvr'
+    return ranks, replay_id + '.klvr'
