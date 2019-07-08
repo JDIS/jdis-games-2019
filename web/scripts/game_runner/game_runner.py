@@ -26,6 +26,7 @@ async def run_game(game):
             logger.exception(e)
         finally:
             database.update_played_game(game, rank, replay_id)
+            logger.info("Game finished: {}".format(game.id))
 
 def main():
     i = 59
