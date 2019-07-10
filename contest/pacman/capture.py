@@ -74,7 +74,7 @@ JUMP_TIME = 30
 def noisyDistance(pos1: int, pos2: int) -> int:
   return int(manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
 
-def noisyPos(pos, layout) -> Tuple[int, int]:
+def noisyPos(pos: Tuple[int, int], layout: Grid) -> Tuple[int, int]:
     height, width = layout.height, layout.width
     x,y = pos
     x = max(0, min(width-1, int(x + random.choice(SONAR_NOISE_VALUES))))
