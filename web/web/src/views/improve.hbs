@@ -7,29 +7,62 @@
   <h4>Deux agents</h4>
   Deux classes sont à votre disposition pour implémenter vos agents. Vous pouvez n'implémenter qu'une des classes et avoir deux agents identiques, mais pourquoi ne pas avoir deux agents asymétriques ? Par exemple, un agent pourrait défendre vos pastilles alors qu'un autre va tenter de manger celles de votre adversaire.
 
+  <hr />
   <h4>Agent <i>Reflex</i></h4>
   <img src="/public/assets/images/reflex.png"/ style="max-width:500px; display:block;">
   <span style="font-size: 0.8em;">source: Artificial Intelligence: A Modern Approach, Stuart Russel, Peter Norvig<br/></span>
   Pour commencer, un agent réactif est la solution la plus simple. Votre agent reçoit un état et réagit en conséquence, en utilisant des conditions et en tentant d'implémenter vos <i>a prioris</i>. 
 
+  <hr />
   <h4>Minimiser les pertes</h4>
   <img src="/public/assets/images/ab.png"/ style="max-width:500px; display:block;">
   <span style="font-size: 0.8em;">source: Wikipedia<br/></span>
 
   La classe <span class="code">GameState</span> vous permet de <i>simuler</i> des états successeurs avec la méthode <span class="code">generateSuccessor</span>. Alors pourquoi ne pas voir ce que l'avenir vous réserve et tenter de <a href="https://en.wikipedia.org/wiki/Minimax"><b>Mini</b>miser les gains de votre adversaire et <b>Max</b>imiser les vôtres ?</a>
 
+  <hr />
   <h4>Inférence</h4>
   <img src="/public/assets/images/dbn.png"/ style="max-width:500px; display:block;">
   <span style="font-size: 0.8em;">source: The Pacman Project, Berkeley<br/></span>
   Malheureusement, vos agents ne possèdent que des capteurs bruités pour détecter les autres agents. Se servir des distances bruitées directement peut fonctionner, mais vous seriez probablement mieux de tenter d'inférer la position réelle des autres agents. Un certain <a href="https://en.wikipedia.org/wiki/Particle_filter">Monte Carlo</a> pourrait sûrement vous aider.
   
-
+  <hr />
   <h4>Apprentissage par renforcement</h4>
   <img src="/public/assets/images/qlearning.svg"/ style="display:block;">
   <span style="font-size: 0.8em;">source:Wikipedia<br/></span>
   Peut-être que votre agent réflex possède des <i>a prioris</i> trop forts et pas assez justes pour être réellement le maître de Pacman. Dans ce cas, vous voudrez peut-être permettre à votre agent d'apprendre quelle action est la meilleure à prendre en tout temps. Une façon de procéder serait en extrayant des caractéristiques de vos états et en vous définissant une fonction de récompense, vous permettant de faire du <a href="https://en.wikipedia.org/wiki/Q-learning">Q-learning.</a>
 </div>
-<br />
-Que le meilleur gagne !
+<hr />
+<pre>
+                     ALL HAIL GRANDPAC.
+              LONG LIVE THE GHOSTBUSTING KING.
+
+                  ---      ----      ---
+                  |  \    /  + \    /  |
+                  | + \--/      \--/ + |
+                  |   +     +          |
+                  | +     +        +   |
+                @@@@@@@@@@@@@@@@@@@@@@@@@@
+              @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            \   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+             \ /  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+              V   \   @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                   \ /  @@@@@@@@@@@@@@@@@@@@@@@@@@
+                    V     @@@@@@@@@@@@@@@@@@@@@@@@
+                            @@@@@@@@@@@@@@@@@@@@@@
+                    /\      @@@@@@@@@@@@@@@@@@@@@@
+                   /  \  @@@@@@@@@@@@@@@@@@@@@@@@@
+              /\  /    @@@@@@@@@@@@@@@@@@@@@@@@@@@
+             /  \ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            /    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+              @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                @@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@
+</pre>
+
 {{> end }}
 
