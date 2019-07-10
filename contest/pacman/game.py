@@ -90,7 +90,7 @@ class _MetaCosts(type):
 
 class Costs(object, metaclass=_MetaCosts):
     STAY_COST = 0 # Direction.STOP or FROZEN
-    MOVE_COST = .05
+    MOVE_COST = .00
     JUMP_COST = .25
     FREEZE_COST = 1
 
