@@ -67,13 +67,8 @@ def parse_game_output(output, players):
     replay_file = f"{pacman_cwd}{replay_id}.klvr"
     with open(replay_file) as json_file:  
         data = json.load(json_file)
-        if 'history' in data:
-            score_string = data['history'][-1].split('\n')[-2]
-            score_string = score_string.replace("Score: ", "")
-            print(score_string)
-            score = int(float(score_string)*100)/100
-    
+        if 'score' in data:
+            score = int(float(data['score'])*100)/100
             ranks = players if score > 0 else players[::-1]
-
             return ranks, replay_id + '.klvr'
     raise "Replay file couldn't be loaded"
