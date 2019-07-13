@@ -4,6 +4,7 @@ import helpers.directories as directories
 import shutil
 import numpy as np
 import asyncio
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +57,23 @@ async def play_game(bots):
 
 def parse_game_output(output, players):
     lines = output.decode("utf-8").split('\n')
-    starting_team = lines[0]
-    score = int(float(lines[1])*100)/100
-    replay_id = lines[2]
-    ranks = players if score > 0 else players[::-1]
+    replay_id = None
+    for l in lines:
+        if "replay" in l:
+            replay_id = l
+    if replay_id is None:
+        raise "Game output does not contain a replay id"
+    pacman_cwd = directories.get_base_directory() + 'pacman/'
+    replay_file = f"{pacman_cwd}{replay_id}.klvr"
+    with open(replay_file) as json_file:  
+        data = json.load(json_file)
+        if 'history' in data:
+            score_string = data['history'][-1].split('\n')[-2]
+            score_string = score_string.replace("Score: ", "")
+            print(score_string)
+            score = int(float(score_string)*100)/100
+    
+            ranks = players if score > 0 else players[::-1]
 
-    return ranks, replay_id + '.klvr'
+            return ranks, replay_id + '.klvr'
+    raise "Replay file couldn't be loaded"
