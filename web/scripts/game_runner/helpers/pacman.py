@@ -57,6 +57,7 @@ async def play_game(bots):
 
 def parse_game_output(output, players):
     lines = output.decode("utf-8").split('\n')
+    print(lines)
     replay_id = None
     for l in lines:
         if "replay" in l:
